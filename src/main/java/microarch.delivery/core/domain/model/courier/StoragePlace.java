@@ -10,6 +10,7 @@ import libs.errs.UnitResult;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import microarch.delivery.core.domain.model.kernel.Volume;
 import org.apache.logging.log4j.util.Strings;
 
 import java.util.Objects;
@@ -22,40 +23,33 @@ import java.util.UUID;
 public class StoragePlace extends BaseEntity<UUID> {
 
     private final String name;
-    private final int totalVolume;
+    private final Volume totalVolume;
     private UUID orderId;
 
-    private StoragePlace(String name, int volume) {
+    private StoragePlace(String name, Volume volume) {
         super(UUID.randomUUID());
         this.name = name;
         this.totalVolume = volume;
         this.orderId = null;
     }
 
-    public static Result<StoragePlace, Error> create(String name, int volume) {
+    public static Result<StoragePlace, Error> create(String name, Volume volume) {
         if (Strings.isBlank(name)) return Result.failure(GeneralErrors.valueIsRequired("name"));
-        if (volume <= 0) return Result.failure(GeneralErrors.valueMustBeGreaterThan("volume", volume, 0));
 
         var storagePlace = new StoragePlace(name, volume);
         return Result.success(storagePlace);
     }
 
-    public Result<Boolean, Error> canStore(int volume) {
-        if (isOccupied()) {
-            return Result.failure(Error.of("storage_place.occupied",
-                    "Storage place is already occupied"));
-        }
+    public Result<Boolean, Error> canStore(Volume volume) {
+        if (isOccupied()) return Result.failure(Errors.occupied());
 
-        if (volume > this.totalVolume) {
-            return Result.failure(Error.of("storage_place.exceed_total_volume",
-                    String.format("Storage place has a capacity of [%d], which is less than the required capacity [%d]",
-                            this.totalVolume, volume)));
-        }
+        var canHoldResult = this.totalVolume.canHold(volume);
+        if (canHoldResult.isFailure()) return Result.failure(canHoldResult.getError());
 
         return Result.success(true);
     }
 
-    public UnitResult<Error> store(UUID orderId, int volume) {
+    public UnitResult<Error> store(UUID orderId, Volume volume) {
 
         if (Objects.isNull(orderId)) return UnitResult.failure(GeneralErrors.valueIsRequired("target"));
 
@@ -69,15 +63,8 @@ public class StoragePlace extends BaseEntity<UUID> {
     }
 
     public UnitResult<Error> clear(UUID orderId) {
-        if (!isOccupied()) {
-            return UnitResult.failure(Error.of("storage_place.empty",
-                    "Storage place is already empty"));
-        }
-
-        if (!orderId.equals(this.orderId)) {
-            return UnitResult.failure(Error.of("storage_place.different_order_stored",
-                    String.format("Storage place does not have the given order [%s]", orderId)));
-        }
+        if (!isOccupied()) return UnitResult.failure(Errors.alreadyEmpty());
+        if (!orderId.equals(this.orderId)) return UnitResult.failure(Errors.differentOrderStored(orderId));
 
         this.orderId = null;
         return UnitResult.success();
@@ -87,4 +74,20 @@ public class StoragePlace extends BaseEntity<UUID> {
         return Objects.nonNull(this.orderId);
     }
 
+    public static final class Errors {
+
+        public static Error occupied() {
+            return Error.of("storage_place.occupied", "Storage place is already occupied");
+        }
+
+        public static Error alreadyEmpty() {
+            return Error.of("storage_place.empty", "Storage place is already empty");
+        }
+
+        public static Error differentOrderStored(UUID requestedOrderId) {
+            return Error.of("storage_place.different_order_stored",
+                    String.format("Storage place does not have the given order [%s]", requestedOrderId));
+        }
+    }
 }
+

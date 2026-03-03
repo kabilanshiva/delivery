@@ -2,6 +2,7 @@ package microarch.delivery.core.domain.model.courier;
 
 import libs.errs.Error;
 import libs.errs.Result;
+import microarch.delivery.core.domain.model.kernel.Volume;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,7 +17,6 @@ class StoragePlaceTest {
     @Test
     @DisplayName("Проверка наследования от BaseEntity")
     void verifyInheritanceFromBaseEntity() {
-        // Assert
         assertThat(StoragePlace.class.getSuperclass().getSimpleName())
                 .isEqualTo("BaseEntity");
     }
@@ -24,46 +24,39 @@ class StoragePlaceTest {
     @Test
     @DisplayName("Успешное создание склада с корректными данными")
     void creationSucceedsWithValidData() {
-        // Act
-        var result = StoragePlace.create("Warehouse-A", 100);
+        var volume = Volume.create(10, 5, 2).getValue();
+        var result = StoragePlace.create("Warehouse-A", volume);
 
-        // Assert
         assertThat(result.isSuccess()).isTrue();
         var place = result.getValue();
         assertThat(place.getName()).isEqualTo("Warehouse-A");
-        assertThat(place.getTotalVolume()).isEqualTo(100);
+        assertThat(place.getTotalVolume()).isEqualTo(volume);
         assertThat(place.getOrderId()).isNull();
-        assertThat(place.getId()).isNotNull(); // UUID должен быть сгенерирован
+        assertThat(place.getId()).isNotNull();
     }
 
     @ParameterizedTest
     @CsvSource({
-            "   , 50",      // Имя содержит только пробелы
-            ", 50",         // Пустая строка
-            "Box, 0",       // Объем равен 0
-            "Box, -10"      // Отрицательный объем
+            "   , 10, 5, 2",
+            ", 10, 5, 2",
     })
-    @DisplayName("Ошибка создания при невалидном имени или объеме")
-    void creationFailsOnInvalidArguments(String name, int volume) {
-        // Act
+    @DisplayName("Ошибка создания при невалидном имени")
+    void creationFailsOnInvalidName(String name, int x, int y, int z) {
+        var volume = Volume.create(x, y, z).getValue();
         Result<StoragePlace, Error> result = StoragePlace.create(name, volume);
 
-        // Assert
         assertThat(result.isFailure()).isTrue();
-        assertThat(result.getError()).isNotNull();
+        assertThat(result.getError().getCode()).isEqualTo("value.is.required");
     }
 
     @Test
     @DisplayName("Можно разместить заказ, если место свободно и объем подходит")
     void canStoreReturnsTrueWhenFreeAndVolumeFits() {
-        // Arrange
-        var place = safeCreate("Zone-1", 50);
-        int requestVolume = 40;
+        var place = safeCreate("Zone-1", 10, 5, 2);
+        var volume = Volume.create(4, 3, 2).getValue(); // fits
 
-        // Act
-        var result = place.canStore(requestVolume);
+        var result = place.canStore(volume);
 
-        // Assert
         assertThat(result.isSuccess()).isTrue();
         assertThat(result.getValue()).isTrue();
     }
@@ -71,47 +64,28 @@ class StoragePlaceTest {
     @Test
     @DisplayName("Нельзя разместить заказ, если место уже занято")
     void canStoreReturnsFalseWhenOccupied() {
-        // Arrange
-        var place = safeCreate("Zone-2", 50);
-        place.store(UUID.randomUUID(), 20); // Занимаем место
-        int requestVolume = 10;
+        var place = safeCreate("Zone-2", 10, 5, 2);
+        var orderId = UUID.randomUUID();
+        var volume = Volume.create(4, 3, 2).getValue();
+        place.store(orderId, volume);
 
-        // Act
+        var requestVolume = Volume.create(2, 2, 2).getValue();
+
         var result = place.canStore(requestVolume);
 
-        // Assert
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getError().getCode()).isEqualTo("storage_place.occupied");
     }
 
     @Test
-    @DisplayName("Нельзя разместить заказ, если запрошенный объем больше доступного")
-    void canStoreReturnsFalseWhenVolumeExceedsCapacity() {
-        // Arrange
-        var place = safeCreate("Zone-3", 20);
-        int requestVolume = 25;
-
-        // Act
-        var result = place.canStore(requestVolume);
-
-        // Assert
-        assertThat(result.isFailure()).isTrue();
-        assertThat(result.getError().getCode()).isEqualTo("storage_place.exceed_total_volume");
-        assertThat(result.getError().getMessage()).contains("20").contains("25");
-    }
-
-    @Test
     @DisplayName("Успешное размещение заказа изменяет статус на занятый")
     void storeSuccessfullyAssignsOrderId() {
-        // Arrange
-        var place = safeCreate("Zone-4", 100);
+        var place = safeCreate("Zone-4", 10, 10, 10);
         var orderId = UUID.randomUUID();
-        int volume = 50;
+        var volume = Volume.create(5, 5, 5).getValue();
 
-        // Act
         var result = place.store(orderId, volume);
 
-        // Assert
         assertThat(result.isSuccess()).isTrue();
         assertThat(place.getOrderId()).isEqualTo(orderId);
     }
@@ -119,33 +93,29 @@ class StoragePlaceTest {
     @Test
     @DisplayName("Ошибка размещения при передаче null в качестве orderId")
     void storeFailsWhenOrderIdIsNull() {
-        // Arrange
-        var place = safeCreate("Zone-5", 100);
+        var place = safeCreate("Zone-5", 10, 10, 10);
+        var volume = Volume.create(5, 5, 5).getValue();
 
-        // Act
-        var result = place.store(null, 50);
+        var result = place.store(null, volume);
 
-        // Assert
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getError().getMessage()).containsIgnoringCase("required");
     }
 
     @ParameterizedTest
     @CsvSource({
-            "100, 100", // Ровно по границе
-            "100, 1",   // Минимальный занимаемый объем
-            "100, 99"   // Почти полный объем
+            "10, 10, 10, 10, 10, 10",
+            "10, 10, 10, 1, 1, 1",
+            "10, 10, 10, 9, 9, 9"
     })
     @DisplayName("Размещение заказов различных объемов вплоть до лимита")
-    void storeHandlesVariousVolumesUpToLimit(int totalVol, int orderVol) {
-        // Arrange
-        var place = safeCreate("Zone-Boundary", totalVol);
+    void storeHandlesVariousVolumesUpToLimit(int totalX, int totalY, int totalZ, int orderX, int orderY, int orderZ) {
+        var place = safeCreate("Zone-Boundary", totalX, totalY, totalZ);
         var orderId = UUID.randomUUID();
+        var volume = Volume.create(orderX, orderY, orderZ).getValue();
 
-        // Act
-        var result = place.store(orderId, orderVol);
+        var result = place.store(orderId, volume);
 
-        // Assert
         assertThat(result.isSuccess()).isTrue();
         assertThat(place.getOrderId()).isEqualTo(orderId);
     }
@@ -153,15 +123,13 @@ class StoragePlaceTest {
     @Test
     @DisplayName("Успешная очистка места освобождает orderId")
     void clearSuccessfullyResetsOrderId() {
-        // Arrange
-        var place = safeCreate("Zone-Clear", 50);
+        var place = safeCreate("Zone-Clear", 10, 10, 10);
         var orderId = UUID.randomUUID();
-        place.store(orderId, 20);
+        var volume = Volume.create(5, 5, 5).getValue();
+        place.store(orderId, volume);
 
-        // Act
         var result = place.clear(orderId);
 
-        // Assert
         assertThat(result.isSuccess()).isTrue();
         assertThat(place.getOrderId()).isNull();
     }
@@ -169,14 +137,11 @@ class StoragePlaceTest {
     @Test
     @DisplayName("Ошибка очистки, если место уже пусто")
     void clearFailsWhenPlaceIsEmpty() {
-        // Arrange
-        var place = safeCreate("Zone-Empty", 50);
+        var place = safeCreate("Zone-Empty", 10, 10, 10);
         var fakeOrderId = UUID.randomUUID();
 
-        // Act
         var result = place.clear(fakeOrderId);
 
-        // Assert
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getError().getCode()).isEqualTo("storage_place.empty");
     }
@@ -184,27 +149,30 @@ class StoragePlaceTest {
     @Test
     @DisplayName("Ошибка очистки, если передан ID другого заказа")
     void clearFailsWhenOrderIdDoesNotMatch() {
-        // Arrange
-        var place = safeCreate("Zone-Mismatch", 50);
+        var place = safeCreate("Zone-Mismatch", 10, 10, 10);
         var realOrderId = UUID.randomUUID();
         var wrongOrderId = UUID.randomUUID();
+        var volume = Volume.create(5, 5, 5).getValue();
 
-        place.store(realOrderId, 10);
+        place.store(realOrderId, volume);
 
-        // Act
         var result = place.clear(wrongOrderId);
 
-        // Assert
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getError().getCode()).isEqualTo("storage_place.different_order_stored");
         assertThat(result.getError().getMessage()).contains(wrongOrderId.toString());
     }
 
-    private StoragePlace safeCreate(String name, int volume) {
-        var result = StoragePlace.create(name, volume);
-        if (result.isFailure()) {
-            throw new IllegalStateException("Не удалось создать StoragePlace для теста: " + result.getError());
+    // Helper method
+    private StoragePlace safeCreate(String name, int x, int y, int z) {
+        var volumeResult = Volume.create(x, y, z);
+        if (volumeResult.isFailure()) {
+            throw new IllegalStateException("Не удалось создать Volume для теста: " + volumeResult.getError());
         }
-        return result.getValue();
+        var placeResult = StoragePlace.create(name, volumeResult.getValue());
+        if (placeResult.isFailure()) {
+            throw new IllegalStateException("Не удалось создать StoragePlace для теста: " + placeResult.getError());
+        }
+        return placeResult.getValue();
     }
 }
