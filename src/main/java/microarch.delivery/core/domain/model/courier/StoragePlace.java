@@ -70,7 +70,7 @@ public class StoragePlace extends BaseEntity<UUID> {
         return UnitResult.success();
     }
 
-    private boolean isOccupied() {
+    public boolean isOccupied() {
         return Objects.nonNull(this.orderId);
     }
 
