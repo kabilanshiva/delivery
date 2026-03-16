@@ -277,4 +277,48 @@ class CourierTest {
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getError().getCode()).isEqualTo("value.is.required");
     }
+
+    @Test
+    @DisplayName("isAvailable возвращает success, если ни одно место хранения не занято")
+    void isAvailableReturnsSuccessWhenNoStorageIsOccupied() {
+        Courier courier = Courier.create("Courier-1", DEFAULT_SPEED, DEFAULT_LOCATION).getValueOrThrow();
+
+        UnitResult<Error> result = courier.isAvailable();
+
+        assertThat(result.isSuccess()).isTrue();
+    }
+
+    @Test
+    @DisplayName("isAvailable возвращает failure, если хотя бы одно место занято")
+    void isAvailableReturnsFailureWhenAtLeastOneStorageIsOccupied() {
+        Courier courier = Courier.create("Courier-1", DEFAULT_SPEED, DEFAULT_LOCATION).getValueOrThrow();
+        Volume orderVolume = Volume.create(2, 1, 1).getValueOrThrow();
+        UUID orderId = UUID.randomUUID();
+
+        courier.takeOrder(orderId, orderVolume);
+
+        UnitResult<Error> result = courier.isAvailable();
+
+        assertThat(result.isFailure()).isTrue();
+        assertThat(result.getError().getCode()).isEqualTo("courier.already_has_an_order");
+    }
+
+    @Test
+    @DisplayName("isAvailable возвращает failure, если все места хранения заняты")
+    void isAvailableReturnsFailureWhenAllStoragesAreOccupied() {
+        Courier courier = Courier.create("Courier-1", DEFAULT_SPEED, DEFAULT_LOCATION).getValueOrThrow();
+        Volume smallVolume = Volume.create(2, 1, 1).getValueOrThrow();
+        Volume largeVolume = Volume.create(5, 2, 1).getValueOrThrow();
+        UUID orderId1 = UUID.randomUUID();
+        UUID orderId2 = UUID.randomUUID();
+
+        courier.addStoragePlace("Small", smallVolume);
+        courier.takeOrder(orderId1, smallVolume);
+        courier.takeOrder(orderId2, largeVolume);
+
+        UnitResult<Error> result = courier.isAvailable();
+
+        assertThat(result.isFailure()).isTrue();
+        assertThat(result.getError().getCode()).isEqualTo("courier.already_has_an_order");
+    }
 }

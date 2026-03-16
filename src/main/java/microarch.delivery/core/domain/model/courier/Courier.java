@@ -127,6 +127,11 @@ public class Courier extends Aggregate<UUID> {
         return UnitResult.success();
     }
 
+    public UnitResult<Error> isAvailable() {
+        var isAvailable = storagePlaces.stream()
+                .noneMatch(StoragePlace::isOccupied);
+        return isAvailable ? UnitResult.success() : UnitResult.failure(Errors.alreadyHasAnOrder());
+    }
 
     public static final class Errors {
 
@@ -138,6 +143,10 @@ public class Courier extends Aggregate<UUID> {
             return Error.of("courier.order_not_available",
                     String.format("Current courier does not have the order [%s]", orderId)
             );
+        }
+
+        public static Error alreadyHasAnOrder() {
+            return Error.of("courier.already_has_an_order", "Current courier already has an order");
         }
     }
 
