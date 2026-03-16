@@ -4,7 +4,7 @@ import libs.errs.Error;
 import libs.errs.Result;
 import libs.errs.UnitResult;
 import microarch.delivery.core.domain.model.courier.Courier;
-import microarch.delivery.core.domain.model.courier.Speed;
+import microarch.delivery.core.domain.model.kernel.Speed;
 import microarch.delivery.core.domain.model.kernel.Location;
 import microarch.delivery.core.domain.model.kernel.Volume;
 import org.junit.jupiter.api.DisplayName;

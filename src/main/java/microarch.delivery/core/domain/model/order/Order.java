@@ -1,6 +1,9 @@
 package microarch.delivery.core.domain.model.order;
 
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import libs.ddd.Aggregate;
 import libs.errs.GeneralErrors;
@@ -19,13 +22,19 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@Table(name = "order")
+@Table(name = "orders")
 @NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 public class Order extends Aggregate<UUID> {
 
+    @Embedded
     private final Location location;
+
+    @Embedded
     private final Volume volume;
+
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
+
     private UUID courierId;
 
     private Order(UUID id, Location location, Volume volume) {

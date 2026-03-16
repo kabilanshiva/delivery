@@ -1,5 +1,6 @@
-package microarch.delivery.core.domain.model.courier;
+package microarch.delivery.core.domain.model.kernel;
 
+import jakarta.persistence.Embeddable;
 import libs.ddd.ValueObject;
 import libs.errs.Error;
 import libs.errs.GeneralErrors;
@@ -14,6 +15,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Embeddable
 public class Speed extends ValueObject<Speed> {
 
     private final int value;

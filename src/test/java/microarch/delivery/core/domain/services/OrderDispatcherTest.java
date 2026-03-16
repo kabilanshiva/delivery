@@ -1,7 +1,7 @@
 package microarch.delivery.core.domain.services;
 
 import microarch.delivery.core.domain.model.courier.Courier;
-import microarch.delivery.core.domain.model.courier.Speed;
+import microarch.delivery.core.domain.model.kernel.Speed;
 import microarch.delivery.core.domain.model.kernel.Location;
 import microarch.delivery.core.domain.model.kernel.Volume;
 import microarch.delivery.core.domain.model.order.Order;

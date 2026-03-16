@@ -1,5 +1,11 @@
 package microarch.delivery.core.domain.model.courier;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import libs.ddd.Aggregate;
 import libs.errs.GeneralErrors;
@@ -10,24 +16,35 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import microarch.delivery.core.domain.model.kernel.Location;
+import microarch.delivery.core.domain.model.kernel.Speed;
 import microarch.delivery.core.domain.model.kernel.Volume;
 import org.apache.logging.log4j.util.Strings;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-
+@Entity
 @Getter
-@Table(name = "courier")
+@Table(name = "couriers")
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 public class Courier extends Aggregate<UUID> {
 
     private final String name;
+
+    @Embedded
     private final Speed speed;
+
+    @Embedded
     private Location location;
+
+    @OneToMany(
+            orphanRemoval = true,
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL
+    )
+    @JoinColumn(name = "courier_id", nullable = false)
     private final List<StoragePlace> storagePlaces = new ArrayList<>();
 
     private Courier(String name, Speed speed, Location location) {

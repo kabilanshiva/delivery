@@ -1,5 +1,6 @@
 package microarch.delivery.core.domain.model.kernel;
 
+import jakarta.persistence.Embeddable;
 import libs.ddd.ValueObject;
 import libs.errs.Error;
 import libs.errs.GeneralErrors;
@@ -14,7 +15,8 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
+@Embeddable
 public class Volume extends ValueObject<Volume> {
 
     private final int x;

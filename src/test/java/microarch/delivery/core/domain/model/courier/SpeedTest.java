@@ -2,6 +2,7 @@ package microarch.delivery.core.domain.model.courier;
 
 import libs.errs.Error;
 import libs.errs.Result;
+import microarch.delivery.core.domain.model.kernel.Speed;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
