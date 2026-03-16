@@ -18,18 +18,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class OrderDispatcherTest {
 
-    private final OrderDispatcherImpl dispatcher = new OrderDispatcherImpl();
+    private final OrderDispatcher dispatcher = new OrderDispatcherImpl();
 
     private static final UUID ORDER_ID = UUID.randomUUID();
     private static final Volume ORDER_VOLUME = Volume.create(3, 2, 1).getValueOrThrow();
     private static final Location ORDER_LOCATION = Location.create(10, 10).getValueOrThrow();
-
     private static final Speed FAST_SPEED = Speed.create(10).getValueOrThrow();
     private static final Speed SLOW_SPEED = Speed.create(1).getValueOrThrow();
     private static final Location DEFAULT_LOCATION = Location.create(1, 1).getValueOrThrow();
 
     private Courier createCourier(String name, Speed speed, Location location) {
         return Courier.create(name, speed, location).getValueOrThrow();
+    }
+
+    private Order createOrder(UUID id, Location location, Volume volume) {
+        return Order.create(id, location, volume).getValueOrThrow();
     }
 
     @Test
@@ -45,7 +48,7 @@ class OrderDispatcherTest {
     @Test
     @DisplayName("Ошибка, если couriers null")
     void dispatchFailsWhenCouriersIsNull() {
-        Order order = Order.create(ORDER_ID, ORDER_LOCATION, ORDER_VOLUME).getValueOrThrow();
+        Order order = createOrder(ORDER_ID, ORDER_LOCATION, ORDER_VOLUME);
 
         Result<Courier, Error> result = dispatcher.dispatch(order, null);
 
@@ -57,7 +60,7 @@ class OrderDispatcherTest {
     @Test
     @DisplayName("Ошибка, если couriers пустой список")
     void dispatchFailsWhenCouriersIsEmpty() {
-        Order order = Order.create(ORDER_ID, ORDER_LOCATION, ORDER_VOLUME).getValueOrThrow();
+        Order order = createOrder(ORDER_ID, ORDER_LOCATION, ORDER_VOLUME);
 
         Result<Courier, Error> result = dispatcher.dispatch(order, List.of());
 
@@ -69,11 +72,11 @@ class OrderDispatcherTest {
     @Test
     @DisplayName("Ошибка, если статус заказа не CREATED")
     void dispatchFailsWhenOrderStatusIsNotCreated() {
-        Order order = Order.create(ORDER_ID, ORDER_LOCATION, ORDER_VOLUME).getValueOrThrow();
+        Order order = createOrder(ORDER_ID, ORDER_LOCATION, ORDER_VOLUME);
         Courier courier = createCourier("c1", FAST_SPEED, DEFAULT_LOCATION);
-        order.assign(courier);
+        order.assign(courier); // Status = ASSIGNED
 
-        Result<Courier, Error> result = dispatcher.dispatch(order, List.of(createCourier("c2", FAST_SPEED, DEFAULT_LOCATION)));
+        Result<Courier, Error> result = dispatcher.dispatch(order, List.of(courier));
 
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getError().getCode()).isEqualTo("order_dispatcher.order_is_not_ready_to_be_delivered");
@@ -81,15 +84,19 @@ class OrderDispatcherTest {
     }
 
     @Test
-    @DisplayName("Ошибка, если все курьеры заняты")
+    @DisplayName("Ошибка, если все курьеры заняты (isAvailable() возвращает failure)")
     void dispatchFailsWhenAllCouriersAreBusy() {
-        Order order = Order.create(ORDER_ID, ORDER_LOCATION, ORDER_VOLUME).getValueOrThrow();
+        Order order = createOrder(ORDER_ID, ORDER_LOCATION, ORDER_VOLUME);
 
         Courier courier1 = createCourier("Courier1", FAST_SPEED, DEFAULT_LOCATION);
         Courier courier2 = createCourier("Courier2", FAST_SPEED, DEFAULT_LOCATION);
 
-        courier1.takeOrder(ORDER_ID, ORDER_VOLUME);
-        courier2.takeOrder(ORDER_ID, ORDER_VOLUME);
+        // Simulate busy courier by clearing storage and adding a small volume
+        courier1.getStoragePlaces().clear();
+        courier1.addStoragePlace("Backpack", Volume.create(1, 1, 1).getValueOrThrow());
+
+        courier2.getStoragePlaces().clear();
+        courier2.addStoragePlace("Backpack", Volume.create(1, 1, 1).getValueOrThrow());
 
         Result<Courier, Error> result = dispatcher.dispatch(order, List.of(courier1, courier2));
 
@@ -98,13 +105,13 @@ class OrderDispatcherTest {
     }
 
     @Test
-    @DisplayName("Ошибка, если курьер не может вместить заказ")
-    void dispatchFailsWhenCourierCanNotTakeOrder() {
-        Order order = Order.create(ORDER_ID, ORDER_LOCATION, ORDER_VOLUME).getValueOrThrow();
+    @DisplayName("Ошибка, если курьер не может вместить заказ (canTakeOrder() возвращает failure)")
+    void dispatchFailsWhenCourierCannotTakeOrder() {
+        Order order = createOrder(ORDER_ID, ORDER_LOCATION, ORDER_VOLUME);
 
         Courier courier = createCourier("Courier1", FAST_SPEED, DEFAULT_LOCATION);
 
-        // Убираем всё место в рюкзаке
+        // Clear backpack and add small volume — now courier has no space for 3x2x1
         courier.getStoragePlaces().clear();
         courier.addStoragePlace("Backpack", Volume.create(1, 1, 1).getValueOrThrow());
 
@@ -115,27 +122,14 @@ class OrderDispatcherTest {
     }
 
     @Test
-    @DisplayName("Выбирается курьер с минимальным временем доставки")
-    void dispatchChoosesCourierWithMinimumTime() {
-        Order order = Order.create(ORDER_ID, ORDER_LOCATION, ORDER_VOLUME).getValueOrThrow();
-
-        Courier fastCourier = createCourier("FastCourier", FAST_SPEED, Location.create(3, 3).getValueOrThrow());
-        Courier slowCourier = createCourier("SlowCourier", SLOW_SPEED, Location.create(3, 3).getValueOrThrow());
-
-        Result<Courier, Error> result = dispatcher.dispatch(order, List.of(slowCourier, fastCourier));
-
-        assertThat(result.isSuccess()).isTrue();
-        assertThat(result.getValue().getName()).isEqualTo("FastCourier");
-    }
-
-    @Test
-    @DisplayName("Ошибка, если takeOrder возвращает failure")
+    @DisplayName("Ошибка, если takeOrder возвращает failure (например, уже занят)")
     void dispatchFailsWhenTakeOrderFails() {
-        Order order = Order.create(ORDER_ID, ORDER_LOCATION, ORDER_VOLUME).getValueOrThrow();
+        Order order = createOrder(ORDER_ID, ORDER_LOCATION, ORDER_VOLUME);
 
         Courier courier = createCourier("Courier1", FAST_SPEED, DEFAULT_LOCATION);
 
-        courier.getStoragePlaces().get(0).store(UUID.randomUUID(), Volume.create(1, 1, 1).getValueOrThrow());
+        // Assign a different order to the courier
+        courier.takeOrder(UUID.randomUUID(), Volume.create(1, 1, 1).getValueOrThrow());
 
         Result<Courier, Error> result = dispatcher.dispatch(order, List.of(courier));
 
@@ -144,9 +138,25 @@ class OrderDispatcherTest {
     }
 
     @Test
+    @DisplayName("Выбирается курьер с минимальным временем доставки")
+    void dispatchChoosesCourierWithMinimumTime() {
+        Order order = createOrder(ORDER_ID, ORDER_LOCATION, ORDER_VOLUME);
+
+        Courier slowCourier = createCourier("SlowCourier", SLOW_SPEED, Location.create(10, 10).getValueOrThrow()); // distance = 14.14 → time = 14
+        Courier fastCourier = createCourier("FastCourier", FAST_SPEED, Location.create(1, 1).getValueOrThrow()); // distance = 12.72 → time = 1
+
+        Result<Courier, Error> result = dispatcher.dispatch(order, List.of(slowCourier, fastCourier));
+
+        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.getValue().getName()).isEqualTo("FastCourier");
+        assertThat(order.getCourierId()).isEqualTo(fastCourier.getId());
+        assertThat(order.getStatus()).isEqualTo(OrderStatus.ASSIGNED);
+    }
+
+    @Test
     @DisplayName("Курьер успешно берет заказ")
     void dispatchSucceedsWhenCourierIsAvailableAndCanTakeOrder() {
-        Order order =Order.create(ORDER_ID, ORDER_LOCATION, ORDER_VOLUME).getValueOrThrow();
+        Order order = createOrder(ORDER_ID, ORDER_LOCATION, ORDER_VOLUME);
 
         Courier courier = createCourier("Courier1", FAST_SPEED, DEFAULT_LOCATION);
 
