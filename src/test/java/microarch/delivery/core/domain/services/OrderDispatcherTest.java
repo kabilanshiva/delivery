@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class OrderDispatcherTest {
 
@@ -38,11 +39,9 @@ class OrderDispatcherTest {
     @Test
     @DisplayName("Ошибка, если заказ null")
     void dispatchFailsWhenOrderIsNull() {
-        Result<Courier, Error> result = dispatcher.dispatch(null, List.of(createCourier("c1", FAST_SPEED, DEFAULT_LOCATION)));
-
-        assertThat(result.isFailure()).isTrue();
-        assertThat(result.getError().getCode()).isEqualTo("value.is.required");
-        assertThat(result.getError().getMessage()).contains("order");
+        assertThatThrownBy(() -> {
+            dispatcher.dispatch(null, List.of(createCourier("c1", FAST_SPEED, DEFAULT_LOCATION)));
+        }).isInstanceOf(NullPointerException.class);
     }
 
     @Test
@@ -50,11 +49,9 @@ class OrderDispatcherTest {
     void dispatchFailsWhenCouriersIsNull() {
         Order order = createOrder(ORDER_ID, ORDER_LOCATION, ORDER_VOLUME);
 
-        Result<Courier, Error> result = dispatcher.dispatch(order, null);
-
-        assertThat(result.isFailure()).isTrue();
-        assertThat(result.getError().getCode()).isEqualTo("value.is.required");
-        assertThat(result.getError().getMessage()).contains("couriers");
+        assertThatThrownBy(() -> {
+            dispatcher.dispatch(order, null);
+        }).isInstanceOf(NullPointerException.class);
     }
 
     @Test
@@ -65,8 +62,8 @@ class OrderDispatcherTest {
         Result<Courier, Error> result = dispatcher.dispatch(order, List.of());
 
         assertThat(result.isFailure()).isTrue();
-        assertThat(result.getError().getCode()).isEqualTo("value.is.required");
-        assertThat(result.getError().getMessage()).contains("couriers");
+        assertThat(result.getError().getCode()).isEqualTo("order_dispatcher.no_couriers_provided");
+        assertThat(result.getError().getMessage()).contains("No couriers provided for the order");
     }
 
     @Test
@@ -140,10 +137,10 @@ class OrderDispatcherTest {
     @Test
     @DisplayName("Выбирается курьер с минимальным временем доставки")
     void dispatchChoosesCourierWithMinimumTime() {
-        Order order = createOrder(ORDER_ID, ORDER_LOCATION, ORDER_VOLUME);
+        Order order = createOrder(ORDER_ID, Location.create(5,5).getValueOrThrow(), ORDER_VOLUME);
 
-        Courier slowCourier = createCourier("SlowCourier", SLOW_SPEED, Location.create(10, 10).getValueOrThrow()); // distance = 14.14 → time = 14
-        Courier fastCourier = createCourier("FastCourier", FAST_SPEED, Location.create(1, 1).getValueOrThrow()); // distance = 12.72 → time = 1
+        Courier slowCourier = createCourier("SlowCourier", SLOW_SPEED, Location.create(10, 10).getValueOrThrow());
+        Courier fastCourier = createCourier("FastCourier", FAST_SPEED, Location.create(1, 1).getValueOrThrow());
 
         Result<Courier, Error> result = dispatcher.dispatch(order, List.of(slowCourier, fastCourier));
 

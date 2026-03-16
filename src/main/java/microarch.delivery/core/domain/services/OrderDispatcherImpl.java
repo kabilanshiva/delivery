@@ -1,7 +1,6 @@
 package microarch.delivery.core.domain.services;
 
 import libs.errs.Error;
-import libs.errs.GeneralErrors;
 import libs.errs.Result;
 import microarch.delivery.core.domain.model.courier.Courier;
 import microarch.delivery.core.domain.model.order.Order;
@@ -19,6 +18,8 @@ public class OrderDispatcherImpl implements OrderDispatcher {
     public Result<Courier, Error> dispatch(Order order, List<Courier> couriers) {
         Objects.requireNonNull(order);
         Objects.requireNonNull(couriers);
+        if (couriers.isEmpty())
+            return Result.failure(Errors.noCouriersProvided());
         if (OrderStatus.CREATED != order.getStatus())
             return Result.failure(Errors.orderIsNotReadyToBeDelivered(order.getId()));
 
@@ -51,6 +52,11 @@ public class OrderDispatcherImpl implements OrderDispatcher {
         public static Error noSuitableCouriersForOrder(UUID orderId) {
             return Error.of("order_dispatcher.no_suitable_couriers_for_the_order",
                     String.format("Order [%s] can not be delivered by the provided couriers at the moment", orderId));
+        }
+
+        public static Error noCouriersProvided() {
+            return Error.of("order_dispatcher.no_couriers_provided",
+                    "No couriers provided for the order");
         }
     }
 }
