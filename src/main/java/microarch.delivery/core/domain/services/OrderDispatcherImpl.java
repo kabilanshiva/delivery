@@ -17,9 +17,8 @@ import java.util.UUID;
 public class OrderDispatcherImpl implements OrderDispatcher {
     @Override
     public Result<Courier, Error> dispatch(Order order, List<Courier> couriers) {
-        if (Objects.isNull(order)) return Result.failure(GeneralErrors.valueIsRequired("order"));
-        if (Objects.isNull(couriers) || couriers.isEmpty())
-            return Result.failure(GeneralErrors.valueIsRequired("couriers"));
+        Objects.requireNonNull(order);
+        Objects.requireNonNull(couriers);
         if (OrderStatus.CREATED != order.getStatus())
             return Result.failure(Errors.orderIsNotReadyToBeDelivered(order.getId()));
 
@@ -36,8 +35,7 @@ public class OrderDispatcherImpl implements OrderDispatcher {
         var takeOrder = courier.takeOrder(order.getId(), order.getVolume());
         if (takeOrder.isFailure()) {
             return Result.failure(takeOrder.getError());
-        }
-        else {
+        } else {
             order.assign(courier);
             return Result.success(courier);
         }
