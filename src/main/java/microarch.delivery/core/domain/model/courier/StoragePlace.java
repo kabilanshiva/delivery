@@ -1,5 +1,6 @@
 package microarch.delivery.core.domain.model.courier;
 
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import libs.ddd.BaseEntity;
@@ -18,12 +19,15 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@Table(name = "storage_place")
+@Table(name = "storage_places")
 @NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 public class StoragePlace extends BaseEntity<UUID> {
 
     private final String name;
+
+    @Embedded
     private final Volume totalVolume;
+
     private UUID orderId;
 
     private StoragePlace(String name, Volume volume) {

@@ -1,0 +1,24 @@
+package microarch.delivery.adapters.out.postgres;
+
+import microarch.delivery.core.domain.model.courier.Courier;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
+import java.util.UUID;
+
+public interface CourierJpaRepository extends JpaRepository<Courier, UUID> {
+
+    @Query(
+            """
+                SELECT co FROM Courier co
+                WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM StoragePlace sp
+                    WHERE sp MEMBER OF co.storagePlaces
+                    AND sp.orderId IS NOT NULL
+                )
+            """
+    )
+    List<Courier> findAvailableCouriers();
+}
