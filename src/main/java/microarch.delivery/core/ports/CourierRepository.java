@@ -12,4 +12,6 @@ public interface CourierRepository {
     Optional<Courier> findCourierById(UUID courierId);
 
     List<Courier> findAvailableCouriers();
+
+    List<Courier> findAllCouriers();
 }
