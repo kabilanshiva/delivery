@@ -20,6 +20,7 @@ class GetAllCouriersQueryHandlerIntegrationTest extends AbstractPostgresIntegrat
     @Autowired
     private GetAllCouriersQueryHandler handler;
 
+
     @Autowired
     private CourierRepository courierRepository;
 
