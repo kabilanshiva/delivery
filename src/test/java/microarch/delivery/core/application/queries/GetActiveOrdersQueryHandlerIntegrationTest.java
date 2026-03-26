@@ -36,33 +36,21 @@ class GetActiveOrdersQueryHandlerIntegrationTest extends AbstractPostgresIntegra
     @Test
     void shouldReturnAllUncompletedOrders() {
         // Arrange
-        var courier1 = Courier.create(
-                "Иван",
-                Speed.create(2).getValueOrThrow(),
-                Location.create(1, 1).getValueOrThrow()
-        ).getValueOrThrow();
-        var courier2 = Courier.create(
-                "Петр", Speed.create(2).getValueOrThrow(),
-                Location.create(2, 2).getValueOrThrow()
-        ).getValueOrThrow();
-        var order1 = Order.create(
-                UUID.randomUUID(),
-                Location.create(1, 2).getValueOrThrow(),
-                Volume.create(5,2,1).getValueOrThrow()
-        ).getValueOrThrow();
+        var courier1 = Courier
+                .create("Иван", Speed.create(2).getValueOrThrow(), Location.create(1, 1).getValueOrThrow())
+                .getValueOrThrow();
+        var courier2 = Courier
+                .create("Петр", Speed.create(2).getValueOrThrow(), Location.create(2, 2).getValueOrThrow())
+                .getValueOrThrow();
+        var order1 = Order.create(UUID.randomUUID(), Location.create(1, 2).getValueOrThrow(),
+                Volume.create(5, 2, 1).getValueOrThrow()).getValueOrThrow();
 
-        var order2 = Order.create(
-                UUID.randomUUID(),
-                Location.create(3, 4).getValueOrThrow(),
-                Volume.create(5,2,1).getValueOrThrow()
-        ).getValueOrThrow();
+        var order2 = Order.create(UUID.randomUUID(), Location.create(3, 4).getValueOrThrow(),
+                Volume.create(5, 2, 1).getValueOrThrow()).getValueOrThrow();
         order2.assign(courier1);
 
-        var completedOrder = Order.create(
-                UUID.randomUUID(),
-                Location.create(5, 6).getValueOrThrow(),
-                Volume.create(5,1,1).getValueOrThrow()
-        ).getValueOrThrow();
+        var completedOrder = Order.create(UUID.randomUUID(), Location.create(5, 6).getValueOrThrow(),
+                Volume.create(5, 1, 1).getValueOrThrow()).getValueOrThrow();
         completedOrder.assign(courier2);
         completedOrder.complete();
 
@@ -79,28 +67,19 @@ class GetActiveOrdersQueryHandlerIntegrationTest extends AbstractPostgresIntegra
 
         assertThat(response.orders()).hasSize(2);
 
-        assertThat(response.orders())
-                .extracting(OrderDto::id)
-                .containsExactlyInAnyOrder(order1.getId(), order2.getId());
+        assertThat(response.orders()).extracting(OrderDto::id).containsExactlyInAnyOrder(order1.getId(),
+                order2.getId());
 
-        assertThat(response.orders())
-                .extracting(OrderDto::id)
-                .doesNotContain(completedOrder.getId());
+        assertThat(response.orders()).extracting(OrderDto::id).doesNotContain(completedOrder.getId());
     }
 
     @Test
     void shouldReturnEmptyListWhenNoUncompletedOrders() {
         // Arrange
-        var courier = Courier.create(
-                "Иван",
-                Speed.create(2).getValueOrThrow(),
-                Location.create(1, 1).getValueOrThrow()
-        ).getValueOrThrow();
-        var completedOrder = Order.create(
-                UUID.randomUUID(),
-                Location.create(1, 2).getValueOrThrow(),
-                Volume.create(5,1,1).getValueOrThrow()
-        ).getValueOrThrow();
+        var courier = Courier.create("Иван", Speed.create(2).getValueOrThrow(), Location.create(1, 1).getValueOrThrow())
+                .getValueOrThrow();
+        var completedOrder = Order.create(UUID.randomUUID(), Location.create(1, 2).getValueOrThrow(),
+                Volume.create(5, 1, 1).getValueOrThrow()).getValueOrThrow();
         completedOrder.assign(courier);
         completedOrder.complete();
 
@@ -129,11 +108,8 @@ class GetActiveOrdersQueryHandlerIntegrationTest extends AbstractPostgresIntegra
     @Test
     void shouldReturnCorrectOrderDtoFields() {
         // Arrange
-        var order = Order.create(
-                UUID.randomUUID(),
-                Location.create(5, 7).getValueOrThrow(),
-                Volume.create(2,1,1).getValueOrThrow()
-        ).getValueOrThrow();
+        var order = Order.create(UUID.randomUUID(), Location.create(5, 7).getValueOrThrow(),
+                Volume.create(2, 1, 1).getValueOrThrow()).getValueOrThrow();
         orderRepository.saveOrder(order);
 
         // Act

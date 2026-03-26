@@ -16,10 +16,12 @@ public final class CreateCourierCommand {
 
     public static Result<CreateCourierCommand, Error> create(String name, int speed) {
         var error = Guard.againstNullOrEmpty(name, "name");
-        if (error != null) return Result.failure(error);
+        if (error != null)
+            return Result.failure(error);
 
         var speedResult = Speed.create(speed);
-        if (speedResult.isFailure()) return Result.failure(speedResult.getError());
+        if (speedResult.isFailure())
+            return Result.failure(speedResult.getError());
 
         return Result.success(new CreateCourierCommand(name, speedResult.getValue()));
     }

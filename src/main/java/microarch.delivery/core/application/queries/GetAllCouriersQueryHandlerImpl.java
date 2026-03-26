@@ -24,8 +24,7 @@ public class GetAllCouriersQueryHandlerImpl implements GetAllCouriersQueryHandle
                 FROM Courier c
                 """;
 
-        var courierDtoList = em.createQuery(jpql, CourierDto.class)
-                .getResultList();
+        var courierDtoList = em.createQuery(jpql, CourierDto.class).getResultList();
 
         return Result.success(new GetAllCouriersResponse(courierDtoList));
     }

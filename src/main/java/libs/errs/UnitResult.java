@@ -46,64 +46,58 @@ public final class UnitResult<E extends Error> {
     /* ---------- functional ---------- */
 
     public UnitResult<E> onSuccess(Runnable handler) {
-        if (isSuccess) handler.run();
+        if (isSuccess)
+            handler.run();
         return this;
     }
 
     public UnitResult<E> onFailure(Consumer<? super E> handler) {
-        if (isFailure()) handler.accept(error);
+        if (isFailure())
+            handler.accept(error);
         return this;
     }
 
-    public <U> U fold(
-            Function<Void, ? extends U> onSuccess,
-            Function<? super E, ? extends U> onFailure
-    ) {
-        return isSuccess
-                ? onSuccess.apply(null)
-                : onFailure.apply(error);
+    public <U> U fold(Function<Void, ? extends U> onSuccess, Function<? super E, ? extends U> onFailure) {
+        return isSuccess ? onSuccess.apply(null) : onFailure.apply(error);
     }
 
     /* ---------- composition ---------- */
 
     public UnitResult<E> merge(UnitResult<E> other) {
-        if (this.isFailure()) return this;
-        if (other.isFailure()) return other;
+        if (this.isFailure())
+            return this;
+        if (other.isFailure())
+            return other;
         return success();
     }
 
     public static <E extends Error> UnitResult<E> from(Result<Void, E> result) {
-        return result.isSuccess()
-                ? success()
-                : failure(result.getError());
+        return result.isSuccess() ? success() : failure(result.getError());
     }
 
     public Result<Void, E> toResult() {
-        return isFailure()
-                ? Result.failure(error)
-                : Result.success();
+        return isFailure() ? Result.failure(error) : Result.success();
     }
 
     /* ---------- fail-fast ---------- */
 
     public void getOrElseThrow(Function<? super E, ? extends RuntimeException> exceptionMapper) {
-        if (isSuccess) return;
+        if (isSuccess)
+            return;
         throw exceptionMapper.apply(error);
     }
 
     /**
-     * Fail-fast для домена.
-     * Использовать ТОЛЬКО там, где ошибка невозможна по контракту.
+     * Fail-fast для домена. Использовать ТОЛЬКО там, где ошибка невозможна по контракту.
      */
     public void getOrElseThrow() {
-        if (isSuccess) return;
+        if (isSuccess)
+            return;
         throw new DomainInvariantException(error);
     }
 
     @Override
     public String toString() {
-        return isSuccess
-                ? "Success"
-                : "Failure(" + error + ")";
+        return isSuccess ? "Success" : "Failure(" + error + ")";
     }
 }

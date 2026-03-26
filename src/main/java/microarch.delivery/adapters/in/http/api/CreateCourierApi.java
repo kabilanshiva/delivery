@@ -37,47 +37,32 @@ public interface CreateCourierApi {
     }
 
     String PATH_CREATE_COURIER = "/api/v1/couriers";
+
     /**
-     * POST /api/v1/couriers : Добавить курьера
-     * Позволяет добавить курьера
+     * POST /api/v1/couriers : Добавить курьера Позволяет добавить курьера
      *
-     * @param newCourier Курьер (optional)
-     * @return Курьер успешно создан (status code 201)
-     *         or Некорректные параметры запроса (status code 400)
-     *         or Конфликт при создании курьера (status code 409)
-     *         or Внутренняя ошибка сервиса (status code 500)
+     * @param newCourier
+     *            Курьер (optional)
+     *
+     * @return Курьер успешно создан (status code 201) or Некорректные параметры запроса (status code 400) or Конфликт
+     *         при создании курьера (status code 409) or Внутренняя ошибка сервиса (status code 500)
      */
-    @Operation(
-        operationId = "createCourier",
-        summary = "Добавить курьера",
-        description = "Позволяет добавить курьера",
-        tags = { "CreateCourier" },
-        responses = {
-            @ApiResponse(responseCode = "201", description = "Курьер успешно создан", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = CreateCourierResponse.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))
-            }),
-            @ApiResponse(responseCode = "409", description = "Конфликт при создании курьера", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))
-            }),
-            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервиса", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))
-            })
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.POST,
-        value = CreateCourierApi.PATH_CREATE_COURIER,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+    @Operation(operationId = "createCourier", summary = "Добавить курьера", description = "Позволяет добавить курьера", tags = {
+            "CreateCourier" }, responses = {
+                    @ApiResponse(responseCode = "201", description = "Курьер успешно создан", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = CreateCourierResponse.class)) }),
+                    @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class)) }),
+                    @ApiResponse(responseCode = "409", description = "Конфликт при создании курьера", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class)) }),
+                    @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервиса", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class)) }) })
+    @RequestMapping(method = RequestMethod.POST, value = CreateCourierApi.PATH_CREATE_COURIER, produces = {
+            "application/json" }, consumes = { "application/json" })
     default ResponseEntity<CreateCourierResponse> createCourier(
-        @Parameter(name = "NewCourier", description = "Курьер") @Valid @RequestBody(required = false) @Nullable NewCourier newCourier
-    ) {
+            @Parameter(name = "NewCourier", description = "Курьер") @Valid @RequestBody(required = false) @Nullable NewCourier newCourier) {
         getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+            for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"courierId\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);

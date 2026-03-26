@@ -137,7 +137,7 @@ class OrderDispatcherTest {
     @Test
     @DisplayName("Выбирается курьер с минимальным временем доставки")
     void dispatchChoosesCourierWithMinimumTime() {
-        Order order = createOrder(ORDER_ID, Location.create(5,5).getValueOrThrow(), ORDER_VOLUME);
+        Order order = createOrder(ORDER_ID, Location.create(5, 5).getValueOrThrow(), ORDER_VOLUME);
 
         Courier slowCourier = createCourier("SlowCourier", SLOW_SPEED, Location.create(10, 10).getValueOrThrow());
         Courier fastCourier = createCourier("FastCourier", FAST_SPEED, Location.create(1, 1).getValueOrThrow());

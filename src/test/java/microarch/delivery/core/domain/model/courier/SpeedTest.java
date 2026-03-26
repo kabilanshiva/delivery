@@ -33,17 +33,11 @@ class SpeedTest {
 
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getError().getCode()).isEqualTo("value.must.be.greater.than");
-        assertThat(result.getError().getMessage())
-                .contains("value")
-                .contains(String.valueOf(value));
+        assertThat(result.getError().getMessage()).contains("value").contains(String.valueOf(value));
     }
 
     static Stream<Arguments> provideInvalidSpeedValues() {
-        return Stream.of(
-                Arguments.of(0),
-                Arguments.of(-1),
-                Arguments.of(-100)
-        );
+        return Stream.of(Arguments.of(0), Arguments.of(-1), Arguments.of(-100));
     }
 
     @Test

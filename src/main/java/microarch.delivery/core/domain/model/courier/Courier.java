@@ -39,11 +39,7 @@ public class Courier extends Aggregate<UUID> {
     @Embedded
     private Location location;
 
-    @OneToMany(
-            orphanRemoval = true,
-            fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL
-    )
+    @OneToMany(orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "courier_id", nullable = false)
     private final List<StoragePlace> storagePlaces = new ArrayList<>();
 
@@ -52,16 +48,17 @@ public class Courier extends Aggregate<UUID> {
         this.name = name;
         this.speed = speed;
         this.location = location;
-        this.storagePlaces.add(
-                StoragePlace
-                        .create("Backpack", Volume.create(5, 2, 1).getValueOrThrow()).getValueOrThrow()
-        );
+        this.storagePlaces
+                .add(StoragePlace.create("Backpack", Volume.create(5, 2, 1).getValueOrThrow()).getValueOrThrow());
     }
 
     public static Result<Courier, Error> create(String name, Speed speed, Location location) {
-        if (Strings.isBlank(name)) return Result.failure(GeneralErrors.valueIsRequired("name"));
-        if (Objects.isNull(speed)) return Result.failure(GeneralErrors.valueIsRequired("speed"));
-        if (Objects.isNull(location)) return Result.failure(GeneralErrors.valueIsRequired("location"));
+        if (Strings.isBlank(name))
+            return Result.failure(GeneralErrors.valueIsRequired("name"));
+        if (Objects.isNull(speed))
+            return Result.failure(GeneralErrors.valueIsRequired("speed"));
+        if (Objects.isNull(location))
+            return Result.failure(GeneralErrors.valueIsRequired("location"));
 
         var order = new Courier(name, speed, location);
         return Result.success(order);
@@ -69,50 +66,51 @@ public class Courier extends Aggregate<UUID> {
 
     public UnitResult<Error> addStoragePlace(String name, Volume volume) {
         var storagePlaceResult = StoragePlace.create(name, volume);
-        if (storagePlaceResult.isFailure()) return UnitResult.failure(storagePlaceResult.getError());
+        if (storagePlaceResult.isFailure())
+            return UnitResult.failure(storagePlaceResult.getError());
 
         storagePlaces.add(storagePlaceResult.getValue());
         return UnitResult.success();
     }
 
     public UnitResult<Error> canTakeOrder(Volume orderVolume) {
-        return storagePlaces
-                .stream()
-                .anyMatch(storagePlace -> storagePlace.canStore(orderVolume).isSuccess())
-                ? UnitResult.success()
-                : UnitResult.failure(Errors.noSuitableStorageSpaceAvailable());
+        return storagePlaces.stream().anyMatch(storagePlace -> storagePlace.canStore(orderVolume).isSuccess())
+                ? UnitResult.success() : UnitResult.failure(Errors.noSuitableStorageSpaceAvailable());
     }
 
     public UnitResult<Error> takeOrder(UUID orderId, Volume orderVolume) {
-        if (Objects.isNull(orderId)) return UnitResult.failure(GeneralErrors.valueIsRequired("orderId"));
-        if (Objects.isNull(orderVolume)) return UnitResult.failure(GeneralErrors.valueIsRequired("orderVolume"));
+        if (Objects.isNull(orderId))
+            return UnitResult.failure(GeneralErrors.valueIsRequired("orderId"));
+        if (Objects.isNull(orderVolume))
+            return UnitResult.failure(GeneralErrors.valueIsRequired("orderVolume"));
 
-        return storagePlaces.stream()
-                .filter(storagePlace -> storagePlace.canStore(orderVolume).isSuccess())
-                .findFirst()
+        return storagePlaces.stream().filter(storagePlace -> storagePlace.canStore(orderVolume).isSuccess()).findFirst()
                 .map(storagePlace -> storagePlace.store(orderId, orderVolume))
                 .orElse(UnitResult.failure(Errors.noSuitableStorageSpaceAvailable()));
     }
 
     public UnitResult<Error> completeOrder(UUID orderId) {
-        if (Objects.isNull(orderId)) return UnitResult.failure(GeneralErrors.valueIsRequired("orderId"));
+        if (Objects.isNull(orderId))
+            return UnitResult.failure(GeneralErrors.valueIsRequired("orderId"));
 
-        var storage = storagePlaces.stream()
-                .filter(storagePlace -> orderId.equals(storagePlace.getOrderId()))
+        var storage = storagePlaces.stream().filter(storagePlace -> orderId.equals(storagePlace.getOrderId()))
                 .findFirst();
 
-        if (storage.isEmpty()) return UnitResult.failure(Errors.orderNotAvailable(orderId));
+        if (storage.isEmpty())
+            return UnitResult.failure(Errors.orderNotAvailable(orderId));
 
         return storage.get().clear(orderId);
     }
 
     public Result<Integer, Error> calculateTimeToLocation(Location location) {
 
-        if (Objects.isNull(location)) return Result.failure(GeneralErrors.valueIsRequired("location"));
+        if (Objects.isNull(location))
+            return Result.failure(GeneralErrors.valueIsRequired("location"));
 
         var distanceResult = this.location.distanceTo(location);
 
-        if (distanceResult.isFailure()) return Result.failure(distanceResult.getError());
+        if (distanceResult.isFailure())
+            return Result.failure(distanceResult.getError());
 
         return Result.success(Math.ceilDiv(distanceResult.getValue(), this.speed.getValue()));
     }
@@ -131,10 +129,8 @@ public class Courier extends Aggregate<UUID> {
 
         int moveY = Math.max(-cruisingRange, Math.min(difY, cruisingRange));
 
-        Result<Location, Error> locationCreateResult = Location.create(
-                location.getX() + moveX,
-                location.getY() + moveY
-        );
+        Result<Location, Error> locationCreateResult = Location.create(location.getX() + moveX,
+                location.getY() + moveY);
 
         if (locationCreateResult.isFailure()) {
             return UnitResult.failure(locationCreateResult.getError());
@@ -145,8 +141,7 @@ public class Courier extends Aggregate<UUID> {
     }
 
     public UnitResult<Error> isAvailable() {
-        var isAvailable = storagePlaces.stream()
-                .noneMatch(StoragePlace::isOccupied);
+        var isAvailable = storagePlaces.stream().noneMatch(StoragePlace::isOccupied);
         return isAvailable ? UnitResult.success() : UnitResult.failure(Errors.alreadyHasAnOrder());
     }
 
@@ -158,8 +153,7 @@ public class Courier extends Aggregate<UUID> {
 
         public static Error orderNotAvailable(UUID orderId) {
             return Error.of("courier.order_not_available",
-                    String.format("Current courier does not have the order [%s]", orderId)
-            );
+                    String.format("Current courier does not have the order [%s]", orderId));
         }
 
         public static Error alreadyHasAnOrder() {

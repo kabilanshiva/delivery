@@ -95,7 +95,7 @@ class CourierJpaRepositoryTest extends AbstractPostgresIntegrationTest {
         courierRepository.saveCourier(availableCourier);
 
         Courier busyCourier = createCourier("BusyCourier", createSpeed(5), createLocation(2, 2));
-        busyCourier.takeOrder(UUID.randomUUID(), Volume.create(1,1,1).getValueOrThrow());
+        busyCourier.takeOrder(UUID.randomUUID(), Volume.create(1, 1, 1).getValueOrThrow());
         courierRepository.saveCourier(busyCourier);
 
         // Act
@@ -112,7 +112,7 @@ class CourierJpaRepositoryTest extends AbstractPostgresIntegrationTest {
         // Arrange
         Courier courier = createCourier("Courier-1", createSpeed(10), createLocation(1, 1));
         courier.addStoragePlace("Backpack", Volume.create(1, 1, 1).getValueOrThrow());
-        courier.takeOrder(UUID.randomUUID(), Volume.create(1,1,1).getValueOrThrow());
+        courier.takeOrder(UUID.randomUUID(), Volume.create(1, 1, 1).getValueOrThrow());
         courierRepository.saveCourier(courier);
 
         // Act

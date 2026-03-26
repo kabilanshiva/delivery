@@ -6,7 +6,6 @@ import org.springframework.lang.Nullable;
 import jakarta.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-
 import jakarta.annotation.Generated;
 
 /**
@@ -16,100 +15,99 @@ import jakarta.annotation.Generated;
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-24T15:35:30.575475+03:00[Europe/Moscow]", comments = "Generator version: 7.21.0")
 public class Location {
 
-  private Integer x;
+    private Integer x;
 
-  private Integer y;
+    private Integer y;
 
-  public Location() {
-    super();
-  }
-
-  /**
-   * Constructor with only required parameters
-   */
-  public Location(Integer x, Integer y) {
-    this.x = x;
-    this.y = y;
-  }
-
-  public Location x(Integer x) {
-    this.x = x;
-    return this;
-  }
-
-  /**
-   * X
-   * minimum: 0
-   * @return x
-   */
-  @NotNull @Min(value = 0) 
-  @Schema(name = "x", description = "X", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("x")
-  public Integer getX() {
-    return x;
-  }
-
-  @JsonProperty("x")
-  public void setX(Integer x) {
-    this.x = x;
-  }
-
-  public Location y(Integer y) {
-    this.y = y;
-    return this;
-  }
-
-  /**
-   * Y
-   * minimum: 0
-   * @return y
-   */
-  @NotNull @Min(value = 0) 
-  @Schema(name = "y", description = "Y", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("y")
-  public Integer getY() {
-    return y;
-  }
-
-  @JsonProperty("y")
-  public void setY(Integer y) {
-    this.y = y;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
+    public Location() {
+        super();
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    /**
+     * Constructor with only required parameters
+     */
+    public Location(Integer x, Integer y) {
+        this.x = x;
+        this.y = y;
     }
-    Location location = (Location) o;
-    return Objects.equals(this.x, location.x) &&
-        Objects.equals(this.y, location.y);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(x, y);
-  }
+    public Location x(Integer x) {
+        this.x = x;
+        return this;
+    }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class Location {\n");
-    sb.append("    x: ").append(toIndentedString(x)).append("\n");
-    sb.append("    y: ").append(toIndentedString(y)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
+    /**
+     * X minimum: 0
+     *
+     * @return x
+     */
+    @NotNull
+    @Min(value = 0)
+    @Schema(name = "x", description = "X", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty("x")
+    public Integer getX() {
+        return x;
+    }
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(@Nullable Object o) {
-    return o == null ? "null" : o.toString().replace("\n", "\n    ");
-  }
+    @JsonProperty("x")
+    public void setX(Integer x) {
+        this.x = x;
+    }
+
+    public Location y(Integer y) {
+        this.y = y;
+        return this;
+    }
+
+    /**
+     * Y minimum: 0
+     *
+     * @return y
+     */
+    @NotNull
+    @Min(value = 0)
+    @Schema(name = "y", description = "Y", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty("y")
+    public Integer getY() {
+        return y;
+    }
+
+    @JsonProperty("y")
+    public void setY(Integer y) {
+        this.y = y;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Location location = (Location) o;
+        return Objects.equals(this.x, location.x) && Objects.equals(this.y, location.y);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class Location {\n");
+        sb.append("    x: ").append(toIndentedString(x)).append("\n");
+        sb.append("    y: ").append(toIndentedString(y)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(@Nullable Object o) {
+        return o == null ? "null" : o.toString().replace("\n", "\n    ");
+    }
 }
-

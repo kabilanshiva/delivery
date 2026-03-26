@@ -28,8 +28,10 @@ public final class Location extends ValueObject<Location> {
 
     public static Result<Location, Error> create(int x, int y) {
 
-        if (x < 1 || x > 10) return Result.failure(GeneralErrors.valueIsOutOfRange("x", x, 1, 10));
-        if (y < 1 || y > 10) return Result.failure(GeneralErrors.valueIsOutOfRange("y", y, 1, 10));
+        if (x < 1 || x > 10)
+            return Result.failure(GeneralErrors.valueIsOutOfRange("x", x, 1, 10));
+        if (y < 1 || y > 10)
+            return Result.failure(GeneralErrors.valueIsOutOfRange("y", y, 1, 10));
 
         return Result.success(new Location(x, y));
     }
@@ -41,7 +43,8 @@ public final class Location extends ValueObject<Location> {
 
     public Result<Integer, Error> distanceTo(Location target) {
 
-        if (Objects.isNull(target)) return Result.failure(GeneralErrors.valueIsRequired("target"));
+        if (Objects.isNull(target))
+            return Result.failure(GeneralErrors.valueIsRequired("target"));
 
         return Result.success(Math.abs(this.x - target.x) + Math.abs(this.y - target.y));
     }

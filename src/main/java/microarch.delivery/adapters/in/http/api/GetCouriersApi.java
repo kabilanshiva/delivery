@@ -34,37 +34,25 @@ public interface GetCouriersApi {
     }
 
     String PATH_GET_COURIERS = "/api/v1/couriers";
+
     /**
-     * GET /api/v1/couriers : Получить всех курьеров
-     * Позволяет получить всех курьеров
+     * GET /api/v1/couriers : Получить всех курьеров Позволяет получить всех курьеров
      *
-     * @return Успешный ответ (status code 200)
-     *         or Ошибка (status code 200)
+     * @return Успешный ответ (status code 200) or Ошибка (status code 200)
      */
-    @Operation(
-        operationId = "getCouriers",
-        summary = "Получить всех курьеров",
-        description = "Позволяет получить всех курьеров",
-        tags = { "GetCouriers" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Успешный ответ", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Courier.class)))
-            }),
-            @ApiResponse(responseCode = "default", description = "Ошибка", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))
-            })
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = GetCouriersApi.PATH_GET_COURIERS,
-        produces = { "application/json" }
-    )
+    @Operation(operationId = "getCouriers", summary = "Получить всех курьеров", description = "Позволяет получить всех курьеров", tags = {
+            "GetCouriers" }, responses = {
+                    @ApiResponse(responseCode = "200", description = "Успешный ответ", content = {
+                            @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Courier.class))) }),
+                    @ApiResponse(responseCode = "default", description = "Ошибка", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class)) }) })
+    @RequestMapping(method = RequestMethod.GET, value = GetCouriersApi.PATH_GET_COURIERS, produces = {
+            "application/json" })
     default ResponseEntity<List<Courier>> getCouriers(
-        
+
     ) {
         getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+            for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "[ { \"name\" : \"name\", \"location\" : { \"x\" : 0, \"y\" : 0 }, \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" }, { \"name\" : \"name\", \"location\" : { \"x\" : 0, \"y\" : 0 }, \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" } ]";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);

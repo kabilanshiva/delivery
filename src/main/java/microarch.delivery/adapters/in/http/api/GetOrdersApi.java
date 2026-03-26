@@ -34,37 +34,23 @@ public interface GetOrdersApi {
     }
 
     String PATH_GET_ORDERS = "/api/v1/orders/active";
+
     /**
-     * GET /api/v1/orders/active : Получить все незавершенные заказы
-     * Позволяет получить все незавершенные заказы
+     * GET /api/v1/orders/active : Получить все незавершенные заказы Позволяет получить все незавершенные заказы
      *
-     * @return Успешный ответ (status code 200)
-     *         or Ошибка (status code 200)
+     * @return Успешный ответ (status code 200) or Ошибка (status code 200)
      */
-    @Operation(
-        operationId = "getOrders",
-        summary = "Получить все незавершенные заказы",
-        description = "Позволяет получить все незавершенные заказы",
-        tags = { "GetOrders" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Успешный ответ", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Order.class)))
-            }),
-            @ApiResponse(responseCode = "default", description = "Ошибка", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))
-            })
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = GetOrdersApi.PATH_GET_ORDERS,
-        produces = { "application/json" }
-    )
+    @Operation(operationId = "getOrders", summary = "Получить все незавершенные заказы", description = "Позволяет получить все незавершенные заказы", tags = {
+            "GetOrders" }, responses = { @ApiResponse(responseCode = "200", description = "Успешный ответ", content = {
+                    @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Order.class))) }),
+                    @ApiResponse(responseCode = "default", description = "Ошибка", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class)) }) })
+    @RequestMapping(method = RequestMethod.GET, value = GetOrdersApi.PATH_GET_ORDERS, produces = { "application/json" })
     default ResponseEntity<List<Order>> getOrders(
-        
+
     ) {
         getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+            for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "[ { \"location\" : { \"x\" : 0, \"y\" : 0 }, \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" }, { \"location\" : { \"x\" : 0, \"y\" : 0 }, \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" } ]";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);

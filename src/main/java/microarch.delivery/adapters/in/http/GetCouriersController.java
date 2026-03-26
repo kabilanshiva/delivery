@@ -20,14 +20,10 @@ public class GetCouriersController implements GetCouriersApi {
     public ResponseEntity<List<Courier>> getCouriers() {
 
         var handlerResult = getAllCouriersQueryHandler.handle();
-        if (handlerResult.isFailure()) return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        if (handlerResult.isFailure())
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
 
-        var response = handlerResult
-                .getValue()
-                .couriers()
-                .stream()
-                .map(CourierMapper::toHttp)
-                .toList();
+        var response = handlerResult.getValue().couriers().stream().map(CourierMapper::toHttp).toList();
 
         return ResponseEntity.ok(response);
     }

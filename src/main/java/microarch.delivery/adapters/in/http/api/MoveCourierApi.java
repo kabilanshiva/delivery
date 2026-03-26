@@ -38,47 +38,33 @@ public interface MoveCourierApi {
     }
 
     String PATH_MOVE_COURIER = "/api/v1/couriers/{courierId}/move";
+
     /**
-     * POST /api/v1/couriers/{courierId}/move : Переместить курьера
-     * Позволяет переместить курьера
+     * POST /api/v1/couriers/{courierId}/move : Переместить курьера Позволяет переместить курьера
      *
-     * @param courierId Идентификатор курьера (required)
-     * @param location Местоположение (required)
-     * @return Успешный ответ (status code 200)
-     *         or Некорректные параметры запроса (status code 400)
-     *         or Конфликт при завершении заказа (status code 409)
-     *         or Внутренняя ошибка сервиса (status code 500)
+     * @param courierId
+     *            Идентификатор курьера (required)
+     * @param location
+     *            Местоположение (required)
+     *
+     * @return Успешный ответ (status code 200) or Некорректные параметры запроса (status code 400) or Конфликт при
+     *         завершении заказа (status code 409) or Внутренняя ошибка сервиса (status code 500)
      */
-    @Operation(
-        operationId = "moveCourier",
-        summary = "Переместить курьера",
-        description = "Позволяет переместить курьера",
-        tags = { "MoveCourier" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Успешный ответ"),
-            @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))
-            }),
-            @ApiResponse(responseCode = "409", description = "Конфликт при завершении заказа", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))
-            }),
-            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервиса", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))
-            })
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.POST,
-        value = MoveCourierApi.PATH_MOVE_COURIER,
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
+    @Operation(operationId = "moveCourier", summary = "Переместить курьера", description = "Позволяет переместить курьера", tags = {
+            "MoveCourier" }, responses = { @ApiResponse(responseCode = "200", description = "Успешный ответ"),
+                    @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class)) }),
+                    @ApiResponse(responseCode = "409", description = "Конфликт при завершении заказа", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class)) }),
+                    @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервиса", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class)) }) })
+    @RequestMapping(method = RequestMethod.POST, value = MoveCourierApi.PATH_MOVE_COURIER, produces = {
+            "application/json" }, consumes = { "application/json" })
     default ResponseEntity<Void> moveCourier(
-        @Parameter(name = "courierId", description = "Идентификатор курьера", required = true, in = ParameterIn.PATH) @PathVariable("courierId") UUID courierId,
-        @Parameter(name = "Location", description = "Местоположение", required = true) @Valid @RequestBody Location location
-    ) {
+            @Parameter(name = "courierId", description = "Идентификатор курьера", required = true, in = ParameterIn.PATH) @PathVariable("courierId") UUID courierId,
+            @Parameter(name = "Location", description = "Местоположение", required = true) @Valid @RequestBody Location location) {
         getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+            for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"code\" : 0, \"message\" : \"message\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);

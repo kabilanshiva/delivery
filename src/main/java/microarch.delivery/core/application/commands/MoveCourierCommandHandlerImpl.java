@@ -24,7 +24,8 @@ public class MoveCourierCommandHandlerImpl implements MoveCourierCommandHandler 
     public UnitResult<Error> handle() {
         var ordersToBeMoved = orderRepository.findAllAssignedOrders();
 
-        if (ordersToBeMoved.isEmpty()) return UnitResult.success();
+        if (ordersToBeMoved.isEmpty())
+            return UnitResult.success();
 
         List<Error> errors = new ArrayList<>();
 
@@ -45,7 +46,8 @@ public class MoveCourierCommandHandlerImpl implements MoveCourierCommandHandler 
                 }
 
                 var courierCompleteOrder = courier.completeOrder(order.getId());
-                if (courierCompleteOrder.isFailure()) errors.add(courierCompleteOrder.getError());
+                if (courierCompleteOrder.isFailure())
+                    errors.add(courierCompleteOrder.getError());
 
                 orderRepository.saveOrder(order);
                 courierRepository.saveCourier(courier);
@@ -72,10 +74,8 @@ public class MoveCourierCommandHandlerImpl implements MoveCourierCommandHandler 
         }
 
         public static Error invalidCourierForTheOrder(UUID orderId) {
-            return Error.of(
-                    "move_courier_command_handler.courier_does_not_exist",
-                    String.format("Invalid courier for the order : %s ", orderId)
-            );
+            return Error.of("move_courier_command_handler.courier_does_not_exist",
+                    String.format("Invalid courier for the order : %s ", orderId));
         }
     }
 }

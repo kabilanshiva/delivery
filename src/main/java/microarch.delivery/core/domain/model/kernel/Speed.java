@@ -21,7 +21,8 @@ public class Speed extends ValueObject<Speed> {
     private final int value;
 
     public static Result<Speed, Error> create(int value) {
-        if (value <= 0) return Result.failure(GeneralErrors.valueMustBeGreaterThan("value", value, 0));
+        if (value <= 0)
+            return Result.failure(GeneralErrors.valueMustBeGreaterThan("value", value, 0));
 
         return Result.success(new Speed(value));
     }

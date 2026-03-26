@@ -42,29 +42,20 @@ class MoveCourierCommandHandlerTest {
     void handleShouldMoveAndSaveCouriersWhenAssignedOrdersExist() {
         // Arrange
 
-        var courier1 = Courier.create(
-                "Иван",
-                Speed.create(2).getValueOrThrow(),
-                Location.create(1, 1).getValueOrThrow()
-        ).getValueOrThrow();
-        var courier2 = Courier.create(
-                "Петр", Speed.create(2).getValueOrThrow(),
-                Location.create(2, 2).getValueOrThrow()
-        ).getValueOrThrow();
+        var courier1 = Courier
+                .create("Иван", Speed.create(2).getValueOrThrow(), Location.create(1, 1).getValueOrThrow())
+                .getValueOrThrow();
+        var courier2 = Courier
+                .create("Петр", Speed.create(2).getValueOrThrow(), Location.create(2, 2).getValueOrThrow())
+                .getValueOrThrow();
 
-        var order1 = Order.create(
-                UUID.randomUUID(),
-                Location.create(5, 5).getValueOrThrow(),
-                Volume.create(10, 1, 1).getValueOrThrow()
-        ).getValueOrThrow();
-        var order2 = Order.create(
-                UUID.randomUUID(),
-                Location.create(8, 8).getValueOrThrow(),
-                Volume.create(10, 1, 1).getValueOrThrow()
-        ).getValueOrThrow();
+        var order1 = Order.create(UUID.randomUUID(), Location.create(5, 5).getValueOrThrow(),
+                Volume.create(10, 1, 1).getValueOrThrow()).getValueOrThrow();
+        var order2 = Order.create(UUID.randomUUID(), Location.create(8, 8).getValueOrThrow(),
+                Volume.create(10, 1, 1).getValueOrThrow()).getValueOrThrow();
 
-        courier1.takeOrder(order1.getId(), Volume.create(10,1,1).getValueOrThrow());
-        courier2.takeOrder(order2.getId(), Volume.create(10,1,1).getValueOrThrow());
+        courier1.takeOrder(order1.getId(), Volume.create(10, 1, 1).getValueOrThrow());
+        courier2.takeOrder(order2.getId(), Volume.create(10, 1, 1).getValueOrThrow());
 
         order1.assign(courier1);
         order2.assign(courier2);
@@ -87,16 +78,9 @@ class MoveCourierCommandHandlerTest {
         // Arrange
 
         var targetLocation = Location.create(5, 5).getValueOrThrow();
-        var courier =  Courier.create(
-                "Иван",
-                Speed.create(2).getValueOrThrow(),
-                targetLocation
-        ).getValueOrThrow();
-        var order = Order.create(
-                UUID.randomUUID(),
-                targetLocation,
-                Volume.create(5, 1, 1).getValueOrThrow()
-        ).getValueOrThrow();
+        var courier = Courier.create("Иван", Speed.create(2).getValueOrThrow(), targetLocation).getValueOrThrow();
+        var order = Order.create(UUID.randomUUID(), targetLocation, Volume.create(5, 1, 1).getValueOrThrow())
+                .getValueOrThrow();
 
         courier.takeOrder(order.getId(), Volume.create(5, 1, 1).getValueOrThrow());
         order.assign(courier);
@@ -116,23 +100,16 @@ class MoveCourierCommandHandlerTest {
     @Test
     void handleShouldNotSaveWhenMoveFails() {
         // Arrange
-        var courier =  Courier.create(
-                "Иван",
-                Speed.create(2).getValueOrThrow(),
-                Location.create(5, 5).getValueOrThrow()
-        ).getValueOrThrow();
-        var order = Order.create(
-                UUID.randomUUID(),
-                Location.create(6, 6).getValueOrThrow(),
-                Volume.create(5, 1, 1).getValueOrThrow()
-        ).getValueOrThrow();
+        var courier = Courier.create("Иван", Speed.create(2).getValueOrThrow(), Location.create(5, 5).getValueOrThrow())
+                .getValueOrThrow();
+        var order = Order.create(UUID.randomUUID(), Location.create(6, 6).getValueOrThrow(),
+                Volume.create(5, 1, 1).getValueOrThrow()).getValueOrThrow();
 
         courier.takeOrder(order.getId(), Volume.create(5, 1, 1).getValueOrThrow());
         order.assign(courier);
 
         var courierSpy = spy(courier);
-        doReturn(UnitResult.failure(Error.of("move.error", "Ошибка")))
-                .when(courierSpy).move(any());
+        doReturn(UnitResult.failure(Error.of("move.error", "Ошибка"))).when(courierSpy).move(any());
 
         when(orderRepository.findAllAssignedOrders()).thenReturn(List.of(order));
         when(courierRepository.findCourierById(courier.getId())).thenReturn(Optional.of(courierSpy));
@@ -167,16 +144,10 @@ class MoveCourierCommandHandlerTest {
     void handleShouldCollectErrorsWhenCourierNotFound() {
         // Arrange
 
-        var courier =  Courier.create(
-                "Иван",
-                Speed.create(2).getValueOrThrow(),
-                Location.create(5, 5).getValueOrThrow()
-        ).getValueOrThrow();
-        var order = Order.create(
-                UUID.randomUUID(),
-                Location.create(5, 5).getValueOrThrow(),
-                Volume.create(10, 1, 1).getValueOrThrow()
-        ).getValueOrThrow();
+        var courier = Courier.create("Иван", Speed.create(2).getValueOrThrow(), Location.create(5, 5).getValueOrThrow())
+                .getValueOrThrow();
+        var order = Order.create(UUID.randomUUID(), Location.create(5, 5).getValueOrThrow(),
+                Volume.create(10, 1, 1).getValueOrThrow()).getValueOrThrow();
         order.assign(courier);
 
         when(orderRepository.findAllAssignedOrders()).thenReturn(List.of(order));

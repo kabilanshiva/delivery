@@ -47,12 +47,11 @@ public final class Error {
     }
 
     /**
-     * Бросает DomainInvariantException.
-     * Используется в местах, где ошибка невозможна по контракту.
+     * Бросает DomainInvariantException. Используется в местах, где ошибка невозможна по контракту.
      */
-//    public void throwException() {
-//        throw new DomainInvariantException(this);
-//    }
+    // public void throwException() {
+    // throw new DomainInvariantException(this);
+    // }
 
     public static void throwIf(Error error) {
         if (error != null)

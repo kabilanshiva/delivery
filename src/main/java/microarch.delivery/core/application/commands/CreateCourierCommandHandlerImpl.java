@@ -15,7 +15,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CreateCourierCommandHandlerImpl implements CreateCourierCommandHandler {
 
-    private static final Location DEFAULT_LOCATION = Location.create(5,5).getValueOrThrow();
+    private static final Location DEFAULT_LOCATION = Location.create(5, 5).getValueOrThrow();
     private final CourierRepository courierRepository;
 
     @Override
@@ -23,7 +23,8 @@ public class CreateCourierCommandHandlerImpl implements CreateCourierCommandHand
     public Result<UUID, Error> handle(CreateCourierCommand command) {
         var courierResult = Courier.create(command.getName(), command.getSpeed(), DEFAULT_LOCATION);
 
-        if (courierResult.isFailure()) return Result.failure(courierResult.getError());
+        if (courierResult.isFailure())
+            return Result.failure(courierResult.getError());
 
         var courier = courierResult.getValue();
 

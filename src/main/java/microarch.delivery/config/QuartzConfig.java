@@ -11,38 +11,26 @@ public class QuartzConfig {
 
     @Bean
     public JobDetail assignOrdersJobDetail() {
-        return JobBuilder.newJob(AssignOrdersJob.class)
-                .withIdentity("assignOrdersJob")
-                .storeDurably()
-                .build();
+        return JobBuilder.newJob(AssignOrdersJob.class).withIdentity("assignOrdersJob").storeDurably().build();
     }
 
     @Bean
     public Trigger assignOrdersTrigger(JobDetail assignOrdersJobDetail) {
-        return TriggerBuilder.newTrigger()
-                .forJob(assignOrdersJobDetail)
-                .withIdentity("assignOrdersTrigger")
-                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withIntervalInSeconds(2)   // каждые 2 сек
+        return TriggerBuilder.newTrigger().forJob(assignOrdersJobDetail).withIdentity("assignOrdersTrigger")
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(2) // каждые 2 сек
                         .repeatForever())
                 .build();
     }
 
     @Bean
     public JobDetail moveCouriersJobDetail() {
-        return JobBuilder.newJob(MoveCouriersJob.class)
-                .withIdentity("moveCouriersJob")
-                .storeDurably()
-                .build();
+        return JobBuilder.newJob(MoveCouriersJob.class).withIdentity("moveCouriersJob").storeDurably().build();
     }
 
     @Bean
     public Trigger moveCouriersTrigger(JobDetail moveCouriersJobDetail) {
-        return TriggerBuilder.newTrigger()
-                .forJob(moveCouriersJobDetail)
-                .withIdentity("moveCouriersTrigger")
-                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withIntervalInSeconds(2)   // каждые 2 сек
+        return TriggerBuilder.newTrigger().forJob(moveCouriersJobDetail).withIdentity("moveCouriersTrigger")
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(2) // каждые 2 сек
                         .repeatForever())
                 .build();
     }

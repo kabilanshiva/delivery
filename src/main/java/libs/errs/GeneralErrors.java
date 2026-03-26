@@ -11,10 +11,7 @@ public final class GeneralErrors {
             throw new IllegalArgumentException("Name must not be null or empty");
         }
 
-        return Error.of(
-                "record.not.found",
-                String.format("Record not found. Name: %s, id: %s", name, id)
-        );
+        return Error.of("record.not.found", String.format("Record not found. Name: %s, id: %s", name, id));
     }
 
     public static <T> Error valueIsInvalid(String name, T value) {
@@ -22,10 +19,7 @@ public final class GeneralErrors {
             throw new IllegalArgumentException("Name must not be null or empty");
         }
 
-        return Error.of(
-                "value.is.invalid",
-                String.format("Value '%s' is invalid for %s", value, name)
-        );
+        return Error.of("value.is.invalid", String.format("Value '%s' is invalid for %s", value, name));
     }
 
     public static Error valueIsRequired(String name) {
@@ -63,84 +57,44 @@ public final class GeneralErrors {
         return Error.of("value.is.out.of.range", message);
     }
 
-    public static <T extends Comparable<T>> Error valueMustBeGreaterThan(
-            String name,
-            T value,
-            T min) {
+    public static <T extends Comparable<T>> Error valueMustBeGreaterThan(String name, T value, T min) {
 
         if (isNullOrEmpty(name)) {
             throw new IllegalArgumentException("Name must not be null or empty");
         }
 
-        return Error.of(
-                "value.must.be.greater.than",
-                String.format(
-                        "The value of %s (%s) must be greater than %s.",
-                        name,
-                        value,
-                        min
-                )
-        );
+        return Error.of("value.must.be.greater.than",
+                String.format("The value of %s (%s) must be greater than %s.", name, value, min));
     }
 
-    public static <T extends Comparable<T>> Error valueMustBeGreaterOrEqual(
-            String name,
-            T value,
-            T min) {
+    public static <T extends Comparable<T>> Error valueMustBeGreaterOrEqual(String name, T value, T min) {
 
         if (isNullOrEmpty(name)) {
             throw new IllegalArgumentException("Name must not be null or empty");
         }
 
-        return Error.of(
-                "value.must.be.greater.or.equal",
-                String.format(
-                        "The value of %s (%s) must be greater than or equal to %s.",
-                        name,
-                        value,
-                        min
-                )
-        );
+        return Error.of("value.must.be.greater.or.equal",
+                String.format("The value of %s (%s) must be greater than or equal to %s.", name, value, min));
     }
 
-    public static <T extends Comparable<T>> Error valueMustBeLessThan(
-            String name,
-            T value,
-            T max) {
+    public static <T extends Comparable<T>> Error valueMustBeLessThan(String name, T value, T max) {
 
         if (isNullOrEmpty(name)) {
             throw new IllegalArgumentException("Name must not be null or empty");
         }
 
-        return Error.of(
-                "value.must.be.less.than",
-                String.format(
-                        "The value of %s (%s) must be less than %s.",
-                        name,
-                        value,
-                        max
-                )
-        );
+        return Error.of("value.must.be.less.than",
+                String.format("The value of %s (%s) must be less than %s.", name, value, max));
     }
 
-    public static <T extends Comparable<T>> Error valueMustBeLessOrEqual(
-            String name,
-            T value,
-            T max) {
+    public static <T extends Comparable<T>> Error valueMustBeLessOrEqual(String name, T value, T max) {
 
         if (isNullOrEmpty(name)) {
             throw new IllegalArgumentException("Name must not be null or empty");
         }
 
-        return Error.of(
-                "value.must.be.less.or.equal",
-                String.format(
-                        "The value of %s (%s) must be less than or equal to %s.",
-                        name,
-                        value,
-                        max
-                )
-        );
+        return Error.of("value.must.be.less.or.equal",
+                String.format("The value of %s (%s) must be less than or equal to %s.", name, value, max));
     }
 
     private static boolean isNullOrEmpty(String s) {

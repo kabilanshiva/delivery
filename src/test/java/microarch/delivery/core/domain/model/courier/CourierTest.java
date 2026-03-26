@@ -52,10 +52,7 @@ class CourierTest {
     }
 
     static Stream<Arguments> provideInvalidNames() {
-        return Stream.of(
-                Arguments.of(""),
-                Arguments.of("   ")
-        );
+        return Stream.of(Arguments.of(""), Arguments.of("   "));
     }
 
     @Test
@@ -210,11 +207,8 @@ class CourierTest {
     @Test
     @DisplayName("Расчет времени до локации успешно, если расстояние делится на скорость")
     void calculateTimeToLocationSucceedsWithExactDivision() {
-        Courier courier = Courier.create(
-                "Courier-1",
-                Speed.create(5).getValueOrThrow(),
-                DEFAULT_LOCATION
-        ).getValueOrThrow();
+        Courier courier = Courier.create("Courier-1", Speed.create(5).getValueOrThrow(), DEFAULT_LOCATION)
+                .getValueOrThrow();
         Location target = Location.create(10, 1).getValueOrThrow();
 
         Result<Integer, Error> result = courier.calculateTimeToLocation(target);
@@ -237,11 +231,8 @@ class CourierTest {
     @Test
     @DisplayName("Курьер перемещается в пределах диапазона")
     void moveWithinRangeSucceeds() {
-        Courier courier = Courier.create(
-                "Courier-1",
-                Speed.create(3).getValueOrThrow(),
-                DEFAULT_LOCATION
-        ).getValueOrThrow();
+        Courier courier = Courier.create("Courier-1", Speed.create(3).getValueOrThrow(), DEFAULT_LOCATION)
+                .getValueOrThrow();
         Location target = Location.create(2, 1).getValueOrThrow();
 
         UnitResult<Error> result = courier.move(target);
@@ -254,11 +245,8 @@ class CourierTest {
     @Test
     @DisplayName("Курьер не может переместиться дальше, чем его скорость")
     void moveRespectsSpeedLimit() {
-        Courier courier = Courier.create(
-                "Courier-1",
-                Speed.create(2).getValueOrThrow(),
-                DEFAULT_LOCATION
-        ).getValueOrThrow();
+        Courier courier = Courier.create("Courier-1", Speed.create(2).getValueOrThrow(), DEFAULT_LOCATION)
+                .getValueOrThrow();
         Location target = Location.create(5, 5).getValueOrThrow();
 
         UnitResult<Error> result = courier.move(target);

@@ -9,8 +9,7 @@ import java.util.UUID;
 
 public interface CourierJpaRepository extends JpaRepository<Courier, UUID> {
 
-    @Query(
-            """
+    @Query("""
                 SELECT co FROM Courier co
                 WHERE NOT EXISTS (
                     SELECT 1
@@ -18,7 +17,6 @@ public interface CourierJpaRepository extends JpaRepository<Courier, UUID> {
                     WHERE sp MEMBER OF co.storagePlaces
                     AND sp.orderId IS NOT NULL
                 )
-            """
-    )
+            """)
     List<Courier> findAvailableCouriers();
 }

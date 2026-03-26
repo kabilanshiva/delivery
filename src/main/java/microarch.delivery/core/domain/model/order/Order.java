@@ -45,16 +45,20 @@ public class Order extends Aggregate<UUID> {
     }
 
     public static Result<Order, Error> create(UUID id, Location location, Volume volume) {
-        if (Objects.isNull(id)) return Result.failure(GeneralErrors.valueIsRequired("id"));
-        if (Objects.isNull(location)) return Result.failure(GeneralErrors.valueIsRequired("location"));
-        if (Objects.isNull(volume)) return Result.failure(GeneralErrors.valueIsRequired("volume"));
+        if (Objects.isNull(id))
+            return Result.failure(GeneralErrors.valueIsRequired("id"));
+        if (Objects.isNull(location))
+            return Result.failure(GeneralErrors.valueIsRequired("location"));
+        if (Objects.isNull(volume))
+            return Result.failure(GeneralErrors.valueIsRequired("volume"));
 
         var order = new Order(id, location, volume);
         return Result.success(order);
     }
 
     public UnitResult<Error> assign(Courier courier) {
-        if (Objects.isNull(courier)) return UnitResult.failure(GeneralErrors.valueIsRequired("Courier"));
+        if (Objects.isNull(courier))
+            return UnitResult.failure(GeneralErrors.valueIsRequired("Courier"));
         this.courierId = courier.getId();
         this.status = OrderStatus.ASSIGNED;
         return UnitResult.success();
@@ -62,24 +66,22 @@ public class Order extends Aggregate<UUID> {
 
     public UnitResult<Error> complete() {
         return switch (this.status) {
-            case CREATED -> UnitResult.failure(Errors.orderIsNotAssigned(this.getId()));
-            case COMPLETED -> UnitResult.failure(Errors.orderAlreadyCompleted(this.getId()));
-            case ASSIGNED -> {
-                this.status = OrderStatus.COMPLETED;
-                yield UnitResult.success();
-            }
+        case CREATED -> UnitResult.failure(Errors.orderIsNotAssigned(this.getId()));
+        case COMPLETED -> UnitResult.failure(Errors.orderAlreadyCompleted(this.getId()));
+        case ASSIGNED -> {
+            this.status = OrderStatus.COMPLETED;
+            yield UnitResult.success();
+        }
         };
     }
 
     public static class Errors {
         public static Error orderIsNotAssigned(UUID id) {
-            return Error.of("order.not_assigned",
-                    String.format("Order [%s] is not assigned yet", id));
+            return Error.of("order.not_assigned", String.format("Order [%s] is not assigned yet", id));
         }
 
         public static Error orderAlreadyCompleted(UUID id) {
-            return Error.of("order.already_completed",
-                    String.format("Order [%s] has been already completed", id));
+            return Error.of("order.already_completed", String.format("Order [%s] has been already completed", id));
         }
     }
 

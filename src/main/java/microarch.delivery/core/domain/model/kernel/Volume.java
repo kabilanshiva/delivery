@@ -24,17 +24,23 @@ public class Volume extends ValueObject<Volume> {
     private final int z;
 
     public static Result<Volume, Error> create(int x, int y, int z) {
-        if (x <= 0) return Result.failure(GeneralErrors.valueMustBeGreaterThan("x", x, 0));
-        if (y <= 0) return Result.failure(GeneralErrors.valueMustBeGreaterThan("y", y, 0));
-        if (z <= 0) return Result.failure(GeneralErrors.valueMustBeGreaterThan("z", z, 0));
+        if (x <= 0)
+            return Result.failure(GeneralErrors.valueMustBeGreaterThan("x", x, 0));
+        if (y <= 0)
+            return Result.failure(GeneralErrors.valueMustBeGreaterThan("y", y, 0));
+        if (z <= 0)
+            return Result.failure(GeneralErrors.valueMustBeGreaterThan("z", z, 0));
 
         return Result.success(new Volume(x, y, z));
     }
 
     public UnitResult<Error> canHold(Volume other) {
-        if (canFit(other.getX(), other.getY(), other.getZ())) return UnitResult.success();
-        if (canFit(other.getY(), other.getZ(), other.getX())) return UnitResult.success();
-        if (canFit(other.getZ(), other.getX(), other.getY())) return UnitResult.success();
+        if (canFit(other.getX(), other.getY(), other.getZ()))
+            return UnitResult.success();
+        if (canFit(other.getY(), other.getZ(), other.getX()))
+            return UnitResult.success();
+        if (canFit(other.getZ(), other.getX(), other.getY()))
+            return UnitResult.success();
 
         return UnitResult.failure(Errors.cantHold());
     }

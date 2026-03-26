@@ -38,24 +38,28 @@ public class StoragePlace extends BaseEntity<UUID> {
     }
 
     public static Result<StoragePlace, Error> create(String name, Volume volume) {
-        if (Strings.isBlank(name)) return Result.failure(GeneralErrors.valueIsRequired("name"));
+        if (Strings.isBlank(name))
+            return Result.failure(GeneralErrors.valueIsRequired("name"));
 
         var storagePlace = new StoragePlace(name, volume);
         return Result.success(storagePlace);
     }
 
     public Result<Boolean, Error> canStore(Volume volume) {
-        if (isOccupied()) return Result.failure(Errors.occupied());
+        if (isOccupied())
+            return Result.failure(Errors.occupied());
 
         var canHoldResult = this.totalVolume.canHold(volume);
-        if (canHoldResult.isFailure()) return Result.failure(canHoldResult.getError());
+        if (canHoldResult.isFailure())
+            return Result.failure(canHoldResult.getError());
 
         return Result.success(true);
     }
 
     public UnitResult<Error> store(UUID orderId, Volume volume) {
 
-        if (Objects.isNull(orderId)) return UnitResult.failure(GeneralErrors.valueIsRequired("target"));
+        if (Objects.isNull(orderId))
+            return UnitResult.failure(GeneralErrors.valueIsRequired("target"));
 
         var canStoreResult = canStore(volume);
         if (canStoreResult.isFailure()) {
@@ -67,8 +71,10 @@ public class StoragePlace extends BaseEntity<UUID> {
     }
 
     public UnitResult<Error> clear(UUID orderId) {
-        if (!isOccupied()) return UnitResult.failure(Errors.alreadyEmpty());
-        if (!orderId.equals(this.orderId)) return UnitResult.failure(Errors.differentOrderStored(orderId));
+        if (!isOccupied())
+            return UnitResult.failure(Errors.alreadyEmpty());
+        if (!orderId.equals(this.orderId))
+            return UnitResult.failure(Errors.differentOrderStored(orderId));
 
         this.orderId = null;
         return UnitResult.success();
@@ -94,4 +100,3 @@ public class StoragePlace extends BaseEntity<UUID> {
         }
     }
 }
-

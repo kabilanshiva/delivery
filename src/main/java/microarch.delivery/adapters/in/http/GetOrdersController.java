@@ -21,14 +21,10 @@ public class GetOrdersController implements GetOrdersApi {
     public ResponseEntity<List<Order>> getOrders() {
 
         var result = getActiveOrdersQueryHandler.handle();
-        if (result.isFailure()) return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        if (result.isFailure())
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
 
-        var response = result
-                .getValue()
-                .orders()
-                .stream()
-                .map(OrderMapper::toHttp)
-                .toList();
+        var response = result.getValue().orders().stream().map(OrderMapper::toHttp).toList();
 
         return ResponseEntity.ok(response);
     }

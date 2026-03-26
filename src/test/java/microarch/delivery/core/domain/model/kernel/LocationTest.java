@@ -14,8 +14,7 @@ public class LocationTest {
     @DisplayName("Проверка наследования от ValueObject")
     void verifyInheritanceFromValueObject() {
         // Assert
-        assertThat(Location.class.getSuperclass().getSimpleName())
-                .isEqualTo("ValueObject");
+        assertThat(Location.class.getSuperclass().getSimpleName()).isEqualTo("ValueObject");
     }
 
     @Test
@@ -36,13 +35,12 @@ public class LocationTest {
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "0, 5",      // X ниже минимума
-            "11, 5",     // X выше максимума
-            "5, 0",      // Y ниже минимума
-            "5, 11",     // Y выше максимума
-            "0, 0",      // Оба ниже минимума
-            "11, 11"     // Оба выше максимума
+    @CsvSource({ "0, 5", // X ниже минимума
+            "11, 5", // X выше максимума
+            "5, 0", // Y ниже минимума
+            "5, 11", // Y выше максимума
+            "0, 0", // Оба ниже минимума
+            "11, 11" // Оба выше максимума
     })
     @DisplayName("Ошибка создания при выходе координат за пределы [1, 10]")
     void creationFailsWhenCoordinatesAreOutOfBounds(int x, int y) {
@@ -112,11 +110,10 @@ public class LocationTest {
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "1, 1, 2, 1, 1",    // Движение вправо на 1
-            "1, 1, 1, 2, 1",    // Движение вверх на 1
+    @CsvSource({ "1, 1, 2, 1, 1", // Движение вправо на 1
+            "1, 1, 1, 2, 1", // Движение вверх на 1
             "10, 10, 1, 1, 18", // Диагональ через всю карту
-            "5, 5, 5, 5, 0"     // Одинаковые координаты через параметризацию
+            "5, 5, 5, 5, 0" // Одинаковые координаты через параметризацию
     })
     @DisplayName("Корректный расчет расстояния для различных сценариев перемещения")
     void verifiesDistanceCalculationAcrossGrid(int x1, int y1, int x2, int y2, int expected) {

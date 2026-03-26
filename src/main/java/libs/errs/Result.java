@@ -3,6 +3,7 @@ package libs.errs;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
 public class Result<T, E extends Error> {
 
     private final T value;
@@ -58,46 +59,36 @@ public class Result<T, E extends Error> {
     /* ---------- functional ---------- */
 
     public <U> Result<U, E> map(Function<? super T, ? extends U> mapper) {
-        return isSuccess
-                ? Result.success(mapper.apply(value))
-                : Result.failure(error);
+        return isSuccess ? Result.success(mapper.apply(value)) : Result.failure(error);
     }
 
     public <U> Result<U, E> flatMap(Function<? super T, Result<U, E>> mapper) {
-        return isSuccess
-                ? mapper.apply(value)
-                : Result.failure(error);
+        return isSuccess ? mapper.apply(value) : Result.failure(error);
     }
 
     public Result<T, E> onSuccess(Consumer<? super T> handler) {
-        if (isSuccess) handler.accept(value);
+        if (isSuccess)
+            handler.accept(value);
         return this;
     }
 
     public Result<T, E> onFailure(Consumer<? super E> handler) {
-        if (isFailure()) handler.accept(error);
+        if (isFailure())
+            handler.accept(error);
         return this;
     }
 
-    public <U> U fold(
-            Function<? super T, ? extends U> onSuccess,
-            Function<? super E, ? extends U> onFailure
-    ) {
-        return isSuccess
-                ? onSuccess.apply(value)
-                : onFailure.apply(error);
+    public <U> U fold(Function<? super T, ? extends U> onSuccess, Function<? super E, ? extends U> onFailure) {
+        return isSuccess ? onSuccess.apply(value) : onFailure.apply(error);
     }
 
     public <F extends Error> Result<T, F> mapError(Function<? super E, ? extends F> mapper) {
-        return isSuccess
-                ? Result.success(value)
-                : Result.failure(mapper.apply(error));
+        return isSuccess ? Result.success(value) : Result.failure(mapper.apply(error));
     }
 
     /* ---------- fail-fast ---------- */
     /**
-     * Fail-fast для домена.
-     * Использовать ТОЛЬКО там, где ошибка невозможна по контракту.
+     * Fail-fast для домена. Использовать ТОЛЬКО там, где ошибка невозможна по контракту.
      */
     public T getValueOrThrow() {
         if (isSuccess)
@@ -108,8 +99,6 @@ public class Result<T, E extends Error> {
 
     @Override
     public String toString() {
-        return isSuccess
-                ? "Success(" + value + ")"
-                : "Failure(" + error + ")";
+        return isSuccess ? "Success(" + value + ")" : "Failure(" + error + ")";
     }
 }

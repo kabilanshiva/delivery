@@ -20,7 +20,8 @@ public class AssignOrderCommandHandlerImpl implements AssignOrderCommandHandler 
     @Transactional
     public UnitResult<Error> handle() {
         var createdOrder = orderRepository.findCreatedOrder();
-        if (createdOrder.isEmpty()) return UnitResult.success();
+        if (createdOrder.isEmpty())
+            return UnitResult.success();
 
         var order = createdOrder.get();
 
@@ -28,7 +29,8 @@ public class AssignOrderCommandHandlerImpl implements AssignOrderCommandHandler 
 
         var dispatch = orderDispatcher.dispatch(order, couriers);
 
-        if (dispatch.isFailure()) return UnitResult.failure(dispatch.getError());
+        if (dispatch.isFailure())
+            return UnitResult.failure(dispatch.getError());
 
         orderRepository.saveOrder(order);
         courierRepository.saveCourier(dispatch.getValue());

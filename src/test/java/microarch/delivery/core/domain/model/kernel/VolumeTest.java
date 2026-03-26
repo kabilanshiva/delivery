@@ -40,20 +40,12 @@ class VolumeTest {
         // Assert
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getError().getCode()).isEqualTo("value.must.be.greater.than");
-        assertThat(result.getError().getMessage())
-                .contains(dimensionName)
-                .contains(String.valueOf(value));
+        assertThat(result.getError().getMessage()).contains(dimensionName).contains(String.valueOf(value));
     }
 
     static Stream<Arguments> provideInvalidDimensions() {
-        return Stream.of(
-                Arguments.of("x", 0, 3),
-                Arguments.of("x", -1, 3),
-                Arguments.of("y", 0, 5),
-                Arguments.of("y", -5, 5),
-                Arguments.of("z", 0, 5),
-                Arguments.of("z", -10, 5)
-        );
+        return Stream.of(Arguments.of("x", 0, 3), Arguments.of("x", -1, 3), Arguments.of("y", 0, 5),
+                Arguments.of("y", -5, 5), Arguments.of("z", 0, 5), Arguments.of("z", -10, 5));
     }
 
     @ParameterizedTest
@@ -68,12 +60,10 @@ class VolumeTest {
     }
 
     static Stream<Arguments> provideFittingVolumes() {
-        return Stream.of(
-                Arguments.of(Volume.create(10, 8, 6).getValue(), Volume.create(5, 7, 4).getValue()),
+        return Stream.of(Arguments.of(Volume.create(10, 8, 6).getValue(), Volume.create(5, 7, 4).getValue()),
                 Arguments.of(Volume.create(4, 3, 2).getValue(), Volume.create(2, 1, 4).getValue()),
                 Arguments.of(Volume.create(5, 4, 3).getValue(), Volume.create(5, 4, 3).getValue()),
-                Arguments.of(Volume.create(5, 3, 2).getValue(), Volume.create(3, 2, 1).getValue())
-        );
+                Arguments.of(Volume.create(5, 3, 2).getValue(), Volume.create(3, 2, 1).getValue()));
     }
 
     @ParameterizedTest
@@ -90,12 +80,10 @@ class VolumeTest {
     }
 
     static Stream<Arguments> provideNonFittingVolumes() {
-        return Stream.of(
-                Arguments.of(Volume.create(3, 2, 1).getValue(), Volume.create(4, 1, 1).getValue()),
+        return Stream.of(Arguments.of(Volume.create(3, 2, 1).getValue(), Volume.create(4, 1, 1).getValue()),
                 Arguments.of(Volume.create(5, 5, 5).getValue(), Volume.create(6, 1, 1).getValue()),
                 Arguments.of(Volume.create(2, 2, 2).getValue(), Volume.create(3, 1, 1).getValue()),
-                Arguments.of(Volume.create(1, 1, 10).getValue(), Volume.create(2, 2, 1).getValue())
-        );
+                Arguments.of(Volume.create(1, 1, 10).getValue(), Volume.create(2, 2, 1).getValue()));
     }
 
     @Test

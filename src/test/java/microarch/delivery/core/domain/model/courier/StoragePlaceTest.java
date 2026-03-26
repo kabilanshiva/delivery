@@ -17,8 +17,7 @@ class StoragePlaceTest {
     @Test
     @DisplayName("Проверка наследования от BaseEntity")
     void verifyInheritanceFromBaseEntity() {
-        assertThat(StoragePlace.class.getSuperclass().getSimpleName())
-                .isEqualTo("BaseEntity");
+        assertThat(StoragePlace.class.getSuperclass().getSimpleName()).isEqualTo("BaseEntity");
     }
 
     @Test
@@ -36,10 +35,7 @@ class StoragePlaceTest {
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "   , 10, 5, 2",
-            ", 10, 5, 2",
-    })
+    @CsvSource({ "   , 10, 5, 2", ", 10, 5, 2", })
     @DisplayName("Ошибка создания при невалидном имени")
     void creationFailsOnInvalidName(String name, int x, int y, int z) {
         var volume = Volume.create(x, y, z).getValue();
@@ -103,11 +99,7 @@ class StoragePlaceTest {
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "10, 10, 10, 10, 10, 10",
-            "10, 10, 10, 1, 1, 1",
-            "10, 10, 10, 9, 9, 9"
-    })
+    @CsvSource({ "10, 10, 10, 10, 10, 10", "10, 10, 10, 1, 1, 1", "10, 10, 10, 9, 9, 9" })
     @DisplayName("Размещение заказов различных объемов вплоть до лимита")
     void storeHandlesVariousVolumesUpToLimit(int totalX, int totalY, int totalZ, int orderX, int orderY, int orderZ) {
         var place = safeCreate("Zone-Boundary", totalX, totalY, totalZ);

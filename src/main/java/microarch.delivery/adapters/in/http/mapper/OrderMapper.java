@@ -6,12 +6,6 @@ import microarch.delivery.core.application.queries.dto.OrderDto;
 
 public class OrderMapper {
     public static Order toHttp(OrderDto orderDto) {
-        return new Order(
-                orderDto.id(),
-                new Location(
-                        orderDto.location().getX(),
-                        orderDto.location().getY()
-                )
-        );
+        return new Order(orderDto.id(), new Location(orderDto.location().getX(), orderDto.location().getY()));
     }
 }

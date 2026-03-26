@@ -35,46 +35,33 @@ public interface CompleteOrderApi {
     }
 
     String PATH_COMPLETE_ORDER = "/api/v1/couriers/{courierId}/orders/{orderId}/complete";
+
     /**
-     * POST /api/v1/couriers/{courierId}/orders/{orderId}/complete : Завершить заказ
-     * Позволяет завершить заказ
+     * POST /api/v1/couriers/{courierId}/orders/{orderId}/complete : Завершить заказ Позволяет завершить заказ
      *
-     * @param courierId Идентификатор курьера (required)
-     * @param orderId Идентификатор заказа (required)
-     * @return Успешный ответ (status code 200)
-     *         or Некорректные параметры запроса (status code 400)
-     *         or Конфликт при завершении заказа (status code 409)
-     *         or Внутренняя ошибка сервиса (status code 500)
+     * @param courierId
+     *            Идентификатор курьера (required)
+     * @param orderId
+     *            Идентификатор заказа (required)
+     *
+     * @return Успешный ответ (status code 200) or Некорректные параметры запроса (status code 400) or Конфликт при
+     *         завершении заказа (status code 409) or Внутренняя ошибка сервиса (status code 500)
      */
-    @Operation(
-        operationId = "completeOrder",
-        summary = "Завершить заказ",
-        description = "Позволяет завершить заказ",
-        tags = { "CompleteOrder" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Успешный ответ"),
-            @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))
-            }),
-            @ApiResponse(responseCode = "409", description = "Конфликт при завершении заказа", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))
-            }),
-            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервиса", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))
-            })
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.POST,
-        value = CompleteOrderApi.PATH_COMPLETE_ORDER,
-        produces = { "application/json" }
-    )
+    @Operation(operationId = "completeOrder", summary = "Завершить заказ", description = "Позволяет завершить заказ", tags = {
+            "CompleteOrder" }, responses = { @ApiResponse(responseCode = "200", description = "Успешный ответ"),
+                    @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class)) }),
+                    @ApiResponse(responseCode = "409", description = "Конфликт при завершении заказа", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class)) }),
+                    @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервиса", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class)) }) })
+    @RequestMapping(method = RequestMethod.POST, value = CompleteOrderApi.PATH_COMPLETE_ORDER, produces = {
+            "application/json" })
     default ResponseEntity<Void> completeOrder(
-        @Parameter(name = "courierId", description = "Идентификатор курьера", required = true, in = ParameterIn.PATH) @PathVariable("courierId") UUID courierId,
-        @Parameter(name = "orderId", description = "Идентификатор заказа", required = true, in = ParameterIn.PATH) @PathVariable("orderId") UUID orderId
-    ) {
+            @Parameter(name = "courierId", description = "Идентификатор курьера", required = true, in = ParameterIn.PATH) @PathVariable("courierId") UUID courierId,
+            @Parameter(name = "orderId", description = "Идентификатор заказа", required = true, in = ParameterIn.PATH) @PathVariable("orderId") UUID orderId) {
         getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+            for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"code\" : 0, \"message\" : \"message\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);

@@ -107,18 +107,12 @@ class AssignOrderCommandHandlerTest {
     }
 
     private Order createOrder() {
-        return Order.create(
-                UUID.randomUUID(),
-                Location.create(5, 5).getValueOrThrow(),
-                Volume.create(5, 2, 1).getValueOrThrow()
-        ).getValueOrThrow();
+        return Order.create(UUID.randomUUID(), Location.create(5, 5).getValueOrThrow(),
+                Volume.create(5, 2, 1).getValueOrThrow()).getValueOrThrow();
     }
 
     private Courier createCourier() {
-        return Courier.create(
-                "Иван Петров",
-                Speed.create(2).getValueOrThrow(),
-                Location.create(1, 1).getValueOrThrow()
-        ).getValueOrThrow();
+        return Courier.create("Иван Петров", Speed.create(2).getValueOrThrow(), Location.create(1, 1).getValueOrThrow())
+                .getValueOrThrow();
     }
 }

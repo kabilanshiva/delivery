@@ -20,7 +20,6 @@ class GetAllCouriersQueryHandlerIntegrationTest extends AbstractPostgresIntegrat
     @Autowired
     private GetAllCouriersQueryHandler handler;
 
-
     @Autowired
     private CourierRepository courierRepository;
 
@@ -35,17 +34,13 @@ class GetAllCouriersQueryHandlerIntegrationTest extends AbstractPostgresIntegrat
     @Test
     void shouldReturnAllCouriers() {
         // Arrange
-        var courier1 = Courier.create(
-                "Иван Петров",
-                Speed.create(2).getValueOrThrow(),
-                Location.create(3, 4).getValueOrThrow()
-        ).getValueOrThrow();
+        var courier1 = Courier
+                .create("Иван Петров", Speed.create(2).getValueOrThrow(), Location.create(3, 4).getValueOrThrow())
+                .getValueOrThrow();
 
-        var courier2 = Courier.create(
-                "Петр Иванов",
-                Speed.create(1).getValueOrThrow(),
-                Location.create(7, 8).getValueOrThrow()
-        ).getValueOrThrow();
+        var courier2 = Courier
+                .create("Петр Иванов", Speed.create(1).getValueOrThrow(), Location.create(7, 8).getValueOrThrow())
+                .getValueOrThrow();
 
         courierRepository.saveCourier(courier1);
         courierRepository.saveCourier(courier2);
@@ -84,9 +79,6 @@ class GetAllCouriersQueryHandlerIntegrationTest extends AbstractPostgresIntegrat
     }
 
     private CourierDto findDtoById(List<CourierDto> dtos, java.util.UUID id) {
-        return dtos.stream()
-                .filter(dto -> dto.id().equals(id))
-                .findFirst()
-                .orElse(null);
+        return dtos.stream().filter(dto -> dto.id().equals(id)).findFirst().orElse(null);
     }
 }

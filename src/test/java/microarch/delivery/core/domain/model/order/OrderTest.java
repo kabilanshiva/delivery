@@ -68,7 +68,8 @@ class OrderTest {
     @DisplayName("Заказ назначается курьеру успешно")
     void assignSucceedsWhenCourierIsValid() {
         Order order = Order.create(VALID_ID, VALID_LOCATION, VALID_VOLUME).getValueOrThrow();
-        Courier courier = Courier.create("Courier-1", Speed.create(10).getValueOrThrow(), VALID_LOCATION).getValueOrThrow();
+        Courier courier = Courier.create("Courier-1", Speed.create(10).getValueOrThrow(), VALID_LOCATION)
+                .getValueOrThrow();
 
         UnitResult<Error> result = order.assign(courier);
 
@@ -93,7 +94,8 @@ class OrderTest {
     @DisplayName("Заказ завершается успешно, если назначен")
     void completeSucceedsWhenAssigned() {
         Order order = Order.create(VALID_ID, VALID_LOCATION, VALID_VOLUME).getValueOrThrow();
-        Courier courier = Courier.create("Courier-1", Speed.create(10).getValueOrThrow(), VALID_LOCATION).getValueOrThrow();
+        Courier courier = Courier.create("Courier-1", Speed.create(10).getValueOrThrow(), VALID_LOCATION)
+                .getValueOrThrow();
         order.assign(courier);
 
         UnitResult<Error> result = order.complete();
@@ -118,7 +120,8 @@ class OrderTest {
     @DisplayName("Ошибка завершения заказа, если он уже завершен")
     void completeFailsWhenAlreadyCompleted() {
         Order order = Order.create(VALID_ID, VALID_LOCATION, VALID_VOLUME).getValueOrThrow();
-        Courier courier = Courier.create("Courier-1", Speed.create(10).getValueOrThrow(), VALID_LOCATION).getValueOrThrow();
+        Courier courier = Courier.create("Courier-1", Speed.create(10).getValueOrThrow(), VALID_LOCATION)
+                .getValueOrThrow();
         order.assign(courier);
         order.complete();
 

@@ -20,11 +20,13 @@ public class CreateCourierController implements CreateCourierApi {
     @Override
     public ResponseEntity<CreateCourierResponse> createCourier(NewCourier newCourier) {
         var createCourierResult = CreateCourierCommand.create(newCourier.getName(), new Random().nextInt(5) + 1);
-        if (createCourierResult.isFailure()) return ResponseEntity.badRequest().build();
+        if (createCourierResult.isFailure())
+            return ResponseEntity.badRequest().build();
         var command = createCourierResult.getValue();
 
         var handlerResult = createCourierCommandHandler.handle(command);
-        if (handlerResult.isFailure()) return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        if (handlerResult.isFailure())
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
 
         var response = new CreateCourierResponse();
         response.setCourierId(handlerResult.getValue());

@@ -23,10 +23,9 @@ public class OrderDispatcherImpl implements OrderDispatcher {
         if (OrderStatus.CREATED != order.getStatus())
             return Result.failure(Errors.orderIsNotReadyToBeDelivered(order.getId()));
 
-        var suitableCourier = couriers.stream()
-                .filter(courier -> courier.isAvailable().isSuccess())
-                .filter(courier -> courier.canTakeOrder(order.getVolume()).isSuccess())
-                .min(Comparator.comparing(courier -> courier.calculateTimeToLocation(order.getLocation()).getValueOrThrow()));
+        var suitableCourier = couriers.stream().filter(courier -> courier.isAvailable().isSuccess())
+                .filter(courier -> courier.canTakeOrder(order.getVolume()).isSuccess()).min(Comparator
+                        .comparing(courier -> courier.calculateTimeToLocation(order.getLocation()).getValueOrThrow()));
 
         if (suitableCourier.isEmpty()) {
             return Result.failure(Errors.noSuitableCouriersForOrder(order.getId()));
@@ -42,7 +41,6 @@ public class OrderDispatcherImpl implements OrderDispatcher {
         }
     }
 
-
     private static class Errors {
         public static Error orderIsNotReadyToBeDelivered(UUID orderId) {
             return Error.of("order_dispatcher.order_is_not_ready_to_be_delivered",
@@ -55,8 +53,7 @@ public class OrderDispatcherImpl implements OrderDispatcher {
         }
 
         public static Error noCouriersProvided() {
-            return Error.of("order_dispatcher.no_couriers_provided",
-                    "No couriers provided for the order");
+            return Error.of("order_dispatcher.no_couriers_provided", "No couriers provided for the order");
         }
     }
 }

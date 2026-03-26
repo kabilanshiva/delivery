@@ -30,6 +30,7 @@ class OrderRepositoryTest extends AbstractPostgresIntegrationTest {
     void cleanUp() {
         orderJpaRepository.deleteAll();
     }
+
     private Order createOrder(UUID id, Location location, Volume volume) {
         return Order.create(id, location, volume).getValueOrThrow();
     }
@@ -129,6 +130,7 @@ class OrderRepositoryTest extends AbstractPostgresIntegrationTest {
         // Assert
         assertThat(foundOrder).isEmpty();
     }
+
     @Test
     @DisplayName("Поиск всех назначенных заказов — возвращает назначенные заказы")
     void findAllAssignedOrders_ReturnsAssignedOrders() {

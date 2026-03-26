@@ -8,7 +8,6 @@ import org.springframework.lang.Nullable;
 import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-
 import jakarta.annotation.Generated;
 
 /**
@@ -18,61 +17,60 @@ import jakarta.annotation.Generated;
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-24T15:35:30.575475+03:00[Europe/Moscow]", comments = "Generator version: 7.21.0")
 public class CreateOrderResponse {
 
-  private @Nullable UUID orderId;
+    private @Nullable UUID orderId;
 
-  public CreateOrderResponse orderId(@Nullable UUID orderId) {
-    this.orderId = orderId;
-    return this;
-  }
-
-  /**
-   * Get orderId
-   * @return orderId
-   */
-  @Valid 
-  @Schema(name = "orderId", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("orderId")
-  public @Nullable UUID getOrderId() {
-    return orderId;
-  }
-
-  @JsonProperty("orderId")
-  public void setOrderId(@Nullable UUID orderId) {
-    this.orderId = orderId;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
+    public CreateOrderResponse orderId(@Nullable UUID orderId) {
+        this.orderId = orderId;
+        return this;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    /**
+     * Get orderId
+     *
+     * @return orderId
+     */
+    @Valid
+    @Schema(name = "orderId", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @JsonProperty("orderId")
+    public @Nullable UUID getOrderId() {
+        return orderId;
     }
-    CreateOrderResponse createOrderResponse = (CreateOrderResponse) o;
-    return Objects.equals(this.orderId, createOrderResponse.orderId);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(orderId);
-  }
+    @JsonProperty("orderId")
+    public void setOrderId(@Nullable UUID orderId) {
+        this.orderId = orderId;
+    }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class CreateOrderResponse {\n");
-    sb.append("    orderId: ").append(toIndentedString(orderId)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        CreateOrderResponse createOrderResponse = (CreateOrderResponse) o;
+        return Objects.equals(this.orderId, createOrderResponse.orderId);
+    }
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(@Nullable Object o) {
-    return o == null ? "null" : o.toString().replace("\n", "\n    ");
-  }
+    @Override
+    public int hashCode() {
+        return Objects.hash(orderId);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class CreateOrderResponse {\n");
+        sb.append("    orderId: ").append(toIndentedString(orderId)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(@Nullable Object o) {
+        return o == null ? "null" : o.toString().replace("\n", "\n    ");
+    }
 }
-
