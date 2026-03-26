@@ -1,4 +1,4 @@
-package microarch.delivery.core.domain.model;
+package microarch.delivery.core.domain.model.kernel;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -34,12 +34,9 @@ public final class Address extends ValueObject<Address> {
     private final String apartment;
 
     public static Result<Address, Error> create(String country, String city, String street, String house,
-                                                String apartment) {
-        var err = Guard.combine(
-                Guard.againstNullOrEmpty(country, "country"),
-                Guard.againstNullOrEmpty(city, "city"),
-                Guard.againstNullOrEmpty(street, "street"),
-                Guard.againstNullOrEmpty(house, "house"),
+            String apartment) {
+        var err = Guard.combine(Guard.againstNullOrEmpty(country, "country"), Guard.againstNullOrEmpty(city, "city"),
+                Guard.againstNullOrEmpty(street, "street"), Guard.againstNullOrEmpty(house, "house"),
                 Guard.againstNullOrEmpty(apartment, "apartment"));
         if (err != null)
             return Result.failure(err);
@@ -47,8 +44,7 @@ public final class Address extends ValueObject<Address> {
         return Result.success(new Address(country, city, street, house, apartment));
     }
 
-    public static Address mustCreate(String country, String city, String street, String house,
-                                     String apartment) {
+    public static Address mustCreate(String country, String city, String street, String house, String apartment) {
         return create(country, city, street, house, apartment).getValueOrThrow();
     }
 
