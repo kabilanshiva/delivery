@@ -56,7 +56,8 @@ class CreateOrderCommandHandlerTest {
                 volumeZ);
 
         when(orderRepository.findOrderById(orderId)).thenReturn(Optional.empty());
-        when(geoClient.getLocation(command.getValueOrThrow().getAddress())).thenReturn(Location.create(1,2).getValue());
+        when(geoClient.getLocation(command.getValueOrThrow().getAddress()))
+                .thenReturn(Location.create(1, 2).getValue());
 
         // Act
         Result<UUID, Error> result = handler.handle(command.getValueOrThrow());
