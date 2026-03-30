@@ -1,5 +1,6 @@
 package microarch.delivery.core.application.commands;
 
+import libs.ddd.DomainEventPublisher;
 import libs.errs.Error;
 import libs.errs.Result;
 import microarch.delivery.core.domain.model.kernel.Address;
@@ -31,11 +32,14 @@ class CreateOrderCommandHandlerTest {
     @Mock
     private GeoClient geoClient;
 
+    @Mock
+    private DomainEventPublisher domainEventPublisher;
+
     private CreateOrderCommandHandler handler;
 
     @BeforeEach
     void setUp() {
-        handler = new CreateOrderCommandHandlerImpl(orderRepository, geoClient);
+        handler = new CreateOrderCommandHandlerImpl(orderRepository, geoClient, domainEventPublisher);
     }
 
     @Test
@@ -66,6 +70,7 @@ class CreateOrderCommandHandlerTest {
         assertThat(result.isSuccess()).isTrue();
         verify(orderRepository).saveOrder(any(Order.class));
         verify(geoClient).getLocation(any(Address.class));
+        verify(domainEventPublisher).publish(any());
     }
 
     @Test

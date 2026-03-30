@@ -1,5 +1,6 @@
 package microarch.delivery.core.application.commands;
 
+import libs.ddd.DomainEventPublisher;
 import libs.errs.Error;
 import libs.errs.UnitResult;
 import microarch.delivery.core.domain.model.courier.Courier;
@@ -31,11 +32,14 @@ class MoveCourierCommandHandlerTest {
     @Mock
     private OrderRepository orderRepository;
 
+    @Mock
+    private DomainEventPublisher domainEventPublisher;
+
     private MoveCourierCommandHandler handler;
 
     @BeforeEach
     void setUp() {
-        handler = new MoveCourierCommandHandlerImpl(courierRepository, orderRepository);
+        handler = new MoveCourierCommandHandlerImpl(courierRepository, orderRepository, domainEventPublisher);
     }
 
     @Test
@@ -95,6 +99,7 @@ class MoveCourierCommandHandlerTest {
         assertThat(result.isSuccess()).isTrue();
         verify(orderRepository).saveOrder(order);
         verify(courierRepository).saveCourier(courier);
+        verify(domainEventPublisher).publish(List.of(order));
     }
 
     @Test
